@@ -36,7 +36,7 @@ public class ModeleurView extends JFrame {
 	//code Model
 	private JPanel bg, toolbar, options, save;
 	private Menu menu;
-	private JButton bSave;
+	
 	
 	
 	
@@ -69,13 +69,14 @@ public class ModeleurView extends JFrame {
 		save.setPreferredSize(new Dimension(130*2,45*2));
 		
 		Font font = new Font("Arial", Font.BOLD, 20);
-		bSave = new JButton("ENREGISTRER");
-		bSave.setFont(font);
-		bSave.setForeground(ModeleurModel.BLACK);
-		bSave.setBackground(ModeleurModel.DARKGREY4);
-		bSave.setPreferredSize(new Dimension(110*2,70));
-		bSave.setFocusPainted(false);;
-		save.add(bSave);
+		mm.bSave = new JButton("ENREGISTRER");
+		mm.bSave.setFont(font);
+		mm.bSave.setForeground(ModeleurModel.BLACK);
+		mm.bSave.setBackground(ModeleurModel.DARKGREY4);
+		mm.bSave.setPreferredSize(new Dimension(110*2,70));
+		mm.bSave.setFocusPainted(false);
+		mm.bSave.addActionListener(mc);
+		save.add(mm.bSave);
 		
 		mm.graph.setPreferredSize(new Dimension(550*2,340*2));
 		mm.graph.addMouseListener(mc);

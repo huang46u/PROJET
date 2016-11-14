@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import Blueprint.Room;
@@ -40,6 +41,7 @@ public class ModeleurModel {
 	protected Wall w = new Wall(v1,v2);
 	protected Room room = new Room(4,"Rectangle");
 	protected Graph graph = new Graph();
+	protected JButton bSave;
 	
 	/**
 	 * 
@@ -50,12 +52,7 @@ public class ModeleurModel {
 			this.setBackground(ModeleurModel.DARKGREY3);	
 			w.draw(g);
 			room.draw(g);
-			try {
-				room.write();
-				room.read("test.txt");
-			} catch (IOException e){
-				
-			}
+			
 			
 		}
 	}

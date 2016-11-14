@@ -17,11 +17,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Room {
 	private ArrayList<Wall> walls = new ArrayList();
 	private String id;
+	
+	public Room(){
+		
+	}
 	
 	public Room(int nb, String id) {
 		if (nb == 4){
@@ -44,16 +51,20 @@ public class Room {
 	}
 	
 	public void write() throws IOException{
-		BufferedWriter in = null;
+		PrintWriter in = null;
 		try {
-	         in = new BufferedWriter(
+	         in = new PrintWriter(
 	               new OutputStreamWriter(new FileOutputStream("test.txt")));
-	         in.write(id);
+	         in.println(id);
 	         for(Wall w : walls){
-	        	 in.write(w.getV1().getX());
-	        	 in.write(w.getV1().getY());
-	        	 in.write(w.getV2().getX());
-	        	 in.write(w.getV2().getY());
+	        	 in.print(w.getV1().getX());
+	        	 in.print(" ");
+	        	 in.print(w.getV1().getY());
+	        	 in.print(" ");
+	        	 in.print(w.getV2().getX());
+	        	 in.print(" ");
+	        	 in.print(w.getV2().getY());
+	        	 in.print("\n");
 	         }
 		} finally {
 			if (in != null)
@@ -66,8 +77,12 @@ public class Room {
 		try {
 	         in = new BufferedReader(
 	               new InputStreamReader(new FileInputStream(filename)));
-	         String name = in.readLine();
-	         System.out.println(name);
+	         id = in.readLine();
+	         String line;
+	         while ((line = in.readLine()) != null){
+	        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
+	        	 walls.add(new Wall(new Vertex(scanner.nextInt(),scanner.nextInt()),new Vertex(scanner.nextInt(),scanner.nextInt())));
+	         }
 		} finally {
 			if (in != null)
 				in.close();

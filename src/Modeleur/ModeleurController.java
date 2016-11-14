@@ -8,18 +8,22 @@
 
 package Modeleur;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import Blueprint.Room;
 import Blueprint.Wall;
 
 /**
  * class ModeleurController 
  * celui-ci dirige tous les instructions de fonctionnalite de modeleur.
  * */
-public class ModeleurController implements MouseListener, MouseMotionListener {
+public class ModeleurController implements ActionListener, MouseListener, MouseMotionListener {
 	/** ModeleurModel qui fournit tous les variables et instances, ainsi que les methodes de fonctionnalite */
 	ModeleurModel mm;
 	
@@ -93,6 +97,24 @@ public class ModeleurController implements MouseListener, MouseMotionListener {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if (source == mm.bSave){
+			try {
+				mm.room.write();
+				Room room2= new Room();
+				room2.read("test.txt");
+				System.out.println(room2.getWalls().get(0).getV1().getX());
+			} catch (IOException exception){
+				
+			}
+		}
 		
 	}
 
