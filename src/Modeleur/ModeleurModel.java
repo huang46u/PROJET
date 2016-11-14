@@ -10,6 +10,7 @@ package Modeleur;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
@@ -49,6 +50,13 @@ public class ModeleurModel {
 			this.setBackground(ModeleurModel.DARKGREY3);	
 			w.draw(g);
 			room.draw(g);
+			try {
+				room.write();
+				room.read("test.txt");
+			} catch (IOException e){
+				
+			}
+			
 		}
 	}
 }
