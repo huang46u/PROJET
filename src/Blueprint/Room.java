@@ -10,17 +10,16 @@ package Blueprint;
 
 import java.awt.Graphics;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import com.jogamp.opengl.GL2;
 
 public class Room {
 	private ArrayList<Wall> walls = new ArrayList();
@@ -48,6 +47,12 @@ public class Room {
 		for (Wall w : walls){
 			w.draw(g);
 		}
+	}
+
+	public void draw (GL2 gl){
+		for (Wall w : walls){
+			w.draw(gl);
+		}	
 	}
 	
 	public void write() throws IOException{

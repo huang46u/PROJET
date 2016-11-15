@@ -12,6 +12,9 @@ import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+
+import com.jogamp.opengl.GL2;
+
 import Modeleur.ModeleurModel;
 
 public class Wall {
@@ -42,21 +45,16 @@ public class Wall {
 		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
 		float supX = r * (disX/disXY);
 		float supY = r * (disY/disXY);
-		float disSupXY = (float) Math.sqrt(supX*supX+supY+supY);
-		float disXYMAX = (float) Math.sqrt((disXY-4*disSupXY)*(disXY-4*disSupXY)+25);
 		
-		//Line2D l = new Line2D.Float(v1.getX()+r+supX*4, v1.getY()+r+supY*4, v2.getX()+r-supX*4, v2.getY()+r-supY*4);
-		//int v1sx=(int) (v1.getX()+r+supX*2);
-		//int v1sy=(int) v1.getY()+r+supY*2;
-		//Vertex v1d = new Vertex((int)(v1.getX()+r+supX*4), (int)(v1.getY()+r+supY*4));
-		//Vertex v2d = new Vertex((int)(v2.getX()+r-supX*4), (int)(v2.getY()+r-supY*4));
+		Line2D l = new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2);
 		
-		//if (l.ptLineDist(x, y) <= r && (v1d.ptDisVt(x, y)+v2d.ptDisVt(x, y) <= disXYMAX)){
-			//selected=true;			
-		//}
-		//else{
-			//selected=false;
-		//}
+		if (l.ptLineDist(x, y) <= r && (x <= v1.getX()+r+supX*2 && x >= v2.getX()+r-supX*2) && (y <= v1.getY()+r+supY*2 && y >= v2.getY()+r-supY*2)){
+			selected=true;			
+		}
+		else{
+			selected=false;
+		}
+		
 	}
 	
 	public void draw(Graphics g) {
@@ -77,13 +75,9 @@ public class Wall {
 		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
 		float supX = r * (disX/disXY);
 		float supY = r * (disY/disXY);
-		//System.out.println("disX "+disX);
-		//System.out.println(disY);
-		//System.out.println(supX);
-		//System.out.println(supY);
 		g2.setColor(ModeleurModel.LIGHTGREY2);
 		g2.setStroke(new BasicStroke(10));
-		g2.draw(new Line2D.Float(v1.getX()+r+supX*4, v1.getY()+r+supY*4, v2.getX()+r-supX*4, v2.getY()+r-supY*4));
+		g2.draw(new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2));
 		
 		
 		v1.draw(g);
@@ -91,6 +85,17 @@ public class Wall {
 	
 	}
 	
-	
+	public void draw (GL2 gl)
+	{
+		gl.glBegin(GL2.GL_QUADS);
+		
+			gl.glColor3f(0.8f, 0.3f, 0.8f);
+			gl.glVertex3f(v1.getX()/100, 1.0f, v1.getY()/100);
+			gl.glVertex3f(v2.getX()/100, 1.0f, v2.getY()/100);
+			gl.glVertex3f(v2.getX()/100, 0.0f, v2.getY()/100);
+			gl.glVertex3f(v1.getX()/100, 0.0f, v1.getY()/100);
+			
+		gl.glEnd();
+	}
 	
 }

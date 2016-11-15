@@ -10,8 +10,6 @@ package Modeleur;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
