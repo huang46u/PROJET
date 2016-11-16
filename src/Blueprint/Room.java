@@ -49,7 +49,7 @@ public class Room {
 		}
 	}
 
-	public void draw (GL2 gl){
+	public void draw(GL2 gl){
 		for (Wall w : walls){
 			w.draw(gl);
 		}	

@@ -48,7 +48,30 @@ public class Wall {
 		
 		Line2D l = new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2);
 		
-		if (l.ptLineDist(x, y) <= r && (x <= v1.getX()+r+supX*2 && x >= v2.getX()+r-supX*2) && (y <= v1.getY()+r+supY*2 && y >= v2.getY()+r-supY*2)){
+		float maxX=v1.getX()+r+supX*2;
+		float minX=v2.getX()+r-supX*2;
+		float maxY=v1.getY()+r+supY*2;
+		float minY=v2.getY()+r-supY*2;
+		
+		if(maxX<minX){
+			float tmp=maxX;
+			maxX=minX;
+			minX=tmp;
+		}
+		
+		if(maxY<minY){
+			float tmp=maxY;
+			maxY=minY;
+			minY=tmp;
+		}
+		
+		boolean betweenX= x <= maxX && x >= minX ;
+		boolean betweenY= y <= maxY && y >= minY;
+		
+		if(minX==maxX) betweenX=true;
+		if(maxY==minY) betweenY=true;
+		
+		if (l.ptLineDist(x, y) <= 2*r && betweenX && betweenY){
 			selected=true;			
 		}
 		else{
@@ -67,18 +90,6 @@ public class Wall {
 		}
 		g2.setStroke(new BasicStroke(10));
 		g2.draw(new Line2D.Float(v1.getX()+r, v1.getY()+r, v2.getX()+r, v2.getY()+r));
-		
-		//test
-		
-		float disX = v2.getX()-v1.getX();
-		float disY = v2.getY()-v1.getY();
-		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
-		float supX = r * (disX/disXY);
-		float supY = r * (disY/disXY);
-		g2.setColor(ModeleurModel.LIGHTGREY2);
-		g2.setStroke(new BasicStroke(10));
-		g2.draw(new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2));
-		
 		
 		v1.draw(g);
 		v2.draw(g);

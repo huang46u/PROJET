@@ -34,9 +34,6 @@ public class ModeleurModel {
 				LIGHTGREY3 = new Color(243, 243, 243),
 				WHITE = new Color(255, 255, 255); 
 				
-	protected Vertex v1 = new Vertex(40,40);
-	protected Vertex v2 = new Vertex(100,100);
-	protected Wall w = new Wall(v1,v2);
 	protected Room room = new Room(4,"Rectangle");
 	protected Graph graph = new Graph();
 	protected JButton bSave;
@@ -48,7 +45,6 @@ public class ModeleurModel {
 		public void paintComponent (Graphics g) {
 			super.paintComponent(g);
 			this.setBackground(ModeleurModel.DARKGREY3);	
-			w.draw(g);
 			room.draw(g);
 			
 			

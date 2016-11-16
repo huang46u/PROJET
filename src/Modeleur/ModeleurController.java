@@ -36,10 +36,6 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		int x = e.getX();
 		int y = e.getY();
 		
-		mm.w.getV1().select(x,y);
-		mm.w.getV2().select(x, y);
-		mm.w.select(x, y);
-		
 		for (Wall w : mm.room.getWalls()){
 			w.getV1().select(x, y);
 			w.getV2().select(x, y);
