@@ -12,7 +12,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,7 +37,7 @@ public class ModeleurView extends JFrame {
 	//code Model
 	private JPanel bg, toolbar, options, save;
 	private Menu menu;
-	
+	private Image demo;
 	
 	
 	
@@ -53,6 +59,7 @@ public class ModeleurView extends JFrame {
 		// menu contient options
 		menu = new Menu();
 		menu.setPreferredSize(new Dimension(130*2,420*2));
+		menu.addMouseListener(menu);
 		
 		options = new JPanel();
 		options.setBackground(ModeleurModel.DARKGREY4);
@@ -91,12 +98,53 @@ public class ModeleurView extends JFrame {
 	/**
 	 * 
 	 * */
-	class Menu extends JPanel {
+	class Menu extends JPanel implements MouseListener{
+		Menu(){
+			try{
+				demo = ImageIO.read(new File("demo.png"));
+			} catch (Exception e){};
+		}
+		
 		public void paintComponent (Graphics g) {
 			super.paintComponent(g);
 			this.setBackground(ModeleurModel.DARKGREY2);
 			g.setColor(ModeleurModel.DARKGREY4);
 			g.fillRoundRect(20, 20, 110*2,410*2, 50, 50);
+			
+			g.drawImage(demo, 20, 20, this);
+			g.drawImage(demo, 20, 110, this);
+			g.drawImage(demo, 20, 200, this);
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			mm.room.addVertex();
+			mm.graph.validate();
+			mm.graph.repaint();
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 

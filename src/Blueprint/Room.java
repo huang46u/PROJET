@@ -31,16 +31,36 @@ public class Room {
 	
 	public Room(int nb, String id) {
 		if (nb == 4){
-			walls.add(new Wall(new Vertex(170,170),new Vertex(170,510)));
-			walls.add(new Wall(new Vertex(170,510),new Vertex(510,510)));
-			walls.add(new Wall(new Vertex(510,510),new Vertex(510,170)));
-			walls.add(new Wall(new Vertex(510,170),new Vertex(170,170)));
+			walls.add(new Wall(new Vertex(190,120),new Vertex(190,800)));
+			walls.add(new Wall(new Vertex(190,800),new Vertex(850,800)));
+			walls.add(new Wall(new Vertex(850,800),new Vertex(850,120)));
+			walls.add(new Wall(new Vertex(850,120),new Vertex(190,120)));
 		}
 		this.id = id;
 	}
 	
 	public ArrayList<Wall> getWalls(){
 		return walls;
+	}
+	
+	public void addVertex(){
+		Wall tmp = null;
+		Vertex v1 = null,v2 = null,v3 = null, v4 = null;
+		
+		for(Wall w: walls){
+			if(w.isSelected()){
+				v1 = w.getV1();
+				v2 = w.getV2();	
+				tmp=w;
+			}
+		}
+		v3 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
+		v4 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
+		walls.remove(tmp);
+		walls.add(new Wall(v1, v3));
+		walls.add(new Wall(v4, v2));
+		v3.select();
+		v4.select();
 	}
 	
 	public void draw(Graphics g){

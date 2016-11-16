@@ -39,7 +39,16 @@ public class Wall {
 		return v2;
 	}
 	
+	public boolean isSelected(){
+		return selected;
+	}
+	
 	public void select(int x, int y){
+		if(selected) {
+			selected=!selected;
+			return;
+			}
+		
 		float disX = v2.getX()-v1.getX();
 		float disY = v2.getY()-v1.getY();
 		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
@@ -71,7 +80,7 @@ public class Wall {
 		if(minX==maxX) betweenX=true;
 		if(maxY==minY) betweenY=true;
 		
-		if (l.ptLineDist(x, y) <= 2*r && betweenX && betweenY){
+		if (l.ptLineDist(x, y) <= r && betweenX && betweenY){
 			selected=true;			
 		}
 		else{
@@ -107,6 +116,10 @@ public class Wall {
 			gl.glVertex3f(v1.getX()/100, 0.0f, v1.getY()/100);
 			
 		gl.glEnd();
+	}
+
+	public void select() {
+		selected = !selected;	
 	}
 	
 }

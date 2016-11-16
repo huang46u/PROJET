@@ -73,7 +73,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 	public void mouseDragged(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-
+		
 		for (Wall w : mm.room.getWalls()){
 		if (w.getV1().isSelected()){
 			w.getV1().move(x-25/2, y-25/2);

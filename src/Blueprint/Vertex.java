@@ -40,9 +40,15 @@ public class Vertex {
 	}
 	
 	public void select(int x, int y){
+		if(selected) {
+			selected=!selected;
+			return;
+			}
+		
 		int disX, disY;
 		disX=x-this.x;
 		disY=y-this.y;
+		
 		if ( disX<25 && disX>0 && disY<25 && disY>0){
 			selected = true;
 		}
