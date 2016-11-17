@@ -103,6 +103,8 @@ public class Room {
 	        	 
 	        	 if (w.getOpen()!=null){
 	        		 in.print(" ");
+	        		 in.print(w.getOpen().getID());
+	        		 in.print(" ");
 		        	 in.print(w.getOpen().getV1().getX());
 		        	 in.print(" ");
 		        	 in.print(w.getOpen().getV1().getY());
@@ -131,7 +133,7 @@ public class Room {
 	        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
 	        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
 	        	 if (scanner.hasNext()){
-	        		 walls.get(walls.size()-1).addDoor("Door", scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+	        		 walls.get(walls.size()-1).addDoor(scanner.next(), scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
 	        	 }
 	         }
 		} finally {
