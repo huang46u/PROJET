@@ -118,7 +118,8 @@ public class ModeleurView extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			mm.room.addVertex();
+			//mm.room.addVertex();
+			mm.room.addDoor("Door");
 			mm.graph.validate();
 			mm.graph.repaint();
 		}

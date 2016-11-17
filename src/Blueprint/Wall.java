@@ -21,6 +21,7 @@ public class Wall {
 	private Vertex v1;
 	private Vertex v2;
 	private boolean selected=false;
+	private Open o=null;
 	
 	//Rayon
 	private float r = 25/2;
@@ -39,8 +40,16 @@ public class Wall {
 		return v2;
 	}
 	
+	public Open getOpen(){
+		return o;
+	}
+	
 	public boolean isSelected(){
 		return selected;
+	}
+	
+	public void select() {
+		selected = !selected;	
 	}
 	
 	public void select(int x, int y){
@@ -89,6 +98,10 @@ public class Wall {
 		
 	}
 	
+	public void move(int x, int y){
+		
+	}
+	
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		if (selected){
@@ -102,24 +115,58 @@ public class Wall {
 		
 		v1.draw(g);
 		v2.draw(g);
+		
+		if(o!=null){
+			addDoor("Door");
+			o.draw(g);
+		}
 	
 	}
 	
 	public void draw (GL2 gl)
 	{
-		gl.glBegin(GL2.GL_QUADS);
+		if(o==null){
+			gl.glBegin(GL2.GL_QUADS);
 		
+				gl.glColor3f(0.8f, 0.3f, 0.8f);
+				gl.glVertex3f(v1.getX()/100, 1.0f, v1.getY()/100);
+				gl.glVertex3f(v2.getX()/100, 1.0f, v2.getY()/100);
+				gl.glVertex3f(v2.getX()/100, 0.0f, v2.getY()/100);
+				gl.glVertex3f(v1.getX()/100, 0.0f, v1.getY()/100);
+			
+			gl.glEnd();
+		} else {
+			gl.glBegin(GL2.GL_QUADS);
+			
 			gl.glColor3f(0.8f, 0.3f, 0.8f);
 			gl.glVertex3f(v1.getX()/100, 1.0f, v1.getY()/100);
-			gl.glVertex3f(v2.getX()/100, 1.0f, v2.getY()/100);
-			gl.glVertex3f(v2.getX()/100, 0.0f, v2.getY()/100);
+			gl.glVertex3f(o.getV1().getX()/100, 1.0f, o.getV1().getY()/100);
+			gl.glVertex3f(o.getV1().getX()/100, 0.0f, o.getV1().getY()/100);
 			gl.glVertex3f(v1.getX()/100, 0.0f, v1.getY()/100);
 			
+			o.draw(gl);
+			
+			gl.glVertex3f(o.getV2().getX()/100, 1.0f, o.getV2().getY()/100);
+			gl.glVertex3f(v2.getX()/100, 1.0f, v2.getY()/100);
+			gl.glVertex3f(v2.getX()/100, 0.0f, v2.getY()/100);
+			gl.glVertex3f(o.getV2().getX()/100, 0.0f, o.getV2().getY()/100);
+		
 		gl.glEnd();
+		}
 	}
 
-	public void select() {
-		selected = !selected;	
+	public void addDoor(String id) {
+		float midX=(v1.getX()+v2.getX())/2;
+		float midY=(v1.getY()+v2.getY())/2;
+		Vertex c1 = new Vertex((v1.getX()+midX)/2,(v1.getY()+midY)/2);
+		Vertex c2 = new Vertex((v2.getX()+midX)/2,(v2.getY()+midY)/2);
+		o = new Door(id, c1, c2);		
+	}
+
+	public void addDoor(String id, float f, float g, float h, float i){
+		Vertex c1 = new Vertex(f,g);
+		Vertex c2 = new Vertex(h,i);
+		o = new Door(id, c1, c2);
 	}
 	
 }

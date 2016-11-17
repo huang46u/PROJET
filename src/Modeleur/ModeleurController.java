@@ -104,7 +104,6 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				mm.room.write();
 				Room room2= new Room();
 				room2.read("test.txt");
-				System.out.println(room2.getWalls().get(0).getV1().getX());
 			} catch (IOException exception){
 				
 			}

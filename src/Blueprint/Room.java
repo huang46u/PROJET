@@ -48,7 +48,7 @@ public class Room {
 		Vertex v1 = null,v2 = null,v3 = null, v4 = null;
 		
 		for(Wall w: walls){
-			if(w.isSelected()){
+			if(w.isSelected()){    //il faut verifier si Open dans le mur est NULL
 				v1 = w.getV1();
 				v2 = w.getV2();	
 				tmp=w;
@@ -61,6 +61,17 @@ public class Room {
 		walls.add(new Wall(v4, v2));
 		v3.select();
 		v4.select();
+	}
+	
+	public void addDoor(String id){
+		
+		for(Wall w: walls){
+			if(w.isSelected()){
+				w.addDoor(id);
+			}
+		}
+		
+		
 	}
 	
 	public void draw(Graphics g){
@@ -89,6 +100,18 @@ public class Room {
 	        	 in.print(w.getV2().getX());
 	        	 in.print(" ");
 	        	 in.print(w.getV2().getY());
+	        	 
+	        	 if (w.getOpen()!=null){
+	        		 in.print(" ");
+		        	 in.print(w.getOpen().getV1().getX());
+		        	 in.print(" ");
+		        	 in.print(w.getOpen().getV1().getY());
+		        	 in.print(" ");
+		        	 in.print(w.getOpen().getV2().getX());
+		        	 in.print(" ");
+		        	 in.print(w.getOpen().getV2().getY());
+	        	 }
+	        	 
 	        	 in.print("\n");
 	         }
 		} finally {
@@ -106,7 +129,10 @@ public class Room {
 	         String line;
 	         while ((line = in.readLine()) != null){
 	        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
-	        	 walls.add(new Wall(new Vertex(scanner.nextInt(),scanner.nextInt()),new Vertex(scanner.nextInt(),scanner.nextInt())));
+	        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
+	        	 if (scanner.hasNext()){
+	        		 walls.get(walls.size()-1).addDoor("Door", scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+	        	 }
 	         }
 		} finally {
 			if (in != null)

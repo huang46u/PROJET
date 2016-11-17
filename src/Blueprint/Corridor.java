@@ -1,5 +1,5 @@
 package Blueprint;
 
-public class Corridor {
+public class Corridor extends Space{
 
 }
