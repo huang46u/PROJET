@@ -98,8 +98,57 @@ public class Wall {
 		
 	}
 	
-	public void move(int x, int y){
+	public float[] move(float x, float y){
+		Line2D l = new Line2D.Float(v1.getX()+r, v1.getY()+r, v2.getX()+r, v2.getY()+r);
+		float v1x,v1y,v2x,v2y;
 		
+		if (v1.getX()==v2.getX()){
+			v1x=x; 
+			v1y=v1.getY();
+			v2x=x; 
+			v2y=v2.getY();
+		}
+		else if (v1.getY()==v2.getY()){
+			v1x=v1.getX();
+			v1y=y;
+			v2x=v2.getX();
+			v2y=y;
+		}
+		else {
+			
+			float a1=(v2.getX()-v1.getX())/(v2.getY()-v1.getY());
+			float b1=v1.getY()-a1*v1.getX();
+			float a2=-1/a1;
+			float b2=y-a2*x;
+			float vx=(b2-b1)/(a1-a2);
+			float vy=vx*a1+b1;
+			float mx=x-vx;
+			float my=y-vy;
+			v1x=v1.getX()+mx;
+			v1y=v1.getY()+my;
+			v2x=v2.getX()+mx;
+			v2y=v2.getY()+my;
+			
+			//System.out.println("############################# ");
+			
+			//float a1=(v2.getX()-v1.getX())/(v2.getY()-v1.getY());
+			//float a2=-1/a1;	
+			//float b3=y-a1*x;
+			//float v1b= v1.getY()-a2*v1.getX();
+			//float v1x= (v1b-b3)/(a1-a2);
+			//float v1y= a1*v1x+b3;
+			//float v2b= v2.getY()-a2*v2.getX();
+			//float v2x= (v2b-b3)/(a1-a2);
+			//float v2y= a1*v2x+b3;
+			//System.out.println(v1b+" "+v2b);
+	
+		}
+		v1.move(v1x, v1y);
+		v2.move(v2x, v2y);
+		
+		float[] list= {v1x,v1y,v2x,v2y};
+		
+		return list;
 	}
 	
 	public void draw(Graphics g) {
@@ -117,7 +166,7 @@ public class Wall {
 		v2.draw(g);
 		
 		if(o!=null){
-			addDoor("Door");
+			addDoor(o.getID());
 			o.draw(g);
 		}
 	

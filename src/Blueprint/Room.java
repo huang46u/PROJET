@@ -70,8 +70,14 @@ public class Room {
 				w.addDoor(id);
 			}
 		}
-		
-		
+	}
+	
+	public void moveDoor(int x, int y){
+		for (Wall w : walls){
+			if(w.isSelected()){
+				w.move(x, y);
+			}
+		}
 	}
 	
 	public void draw(Graphics g){
@@ -84,6 +90,22 @@ public class Room {
 		for (Wall w : walls){
 			w.draw(gl);
 		}	
+	}
+	
+	public Wall nextWall(Wall w){
+		int n=walls.indexOf(w);
+		if(n==walls.size()-1){
+			return walls.get(0);
+		}
+		return walls.get(n+1);
+	}
+	
+	public Wall lastWall(Wall w){
+		int n=walls.indexOf(w);
+		if(n==0){
+			return walls.get(walls.size()-1);
+		}
+		return walls.get(n-1);
 	}
 	
 	public void write() throws IOException{

@@ -71,18 +71,24 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
+		float x = e.getX();
+		float y = e.getY();
 		
 		for (Wall w : mm.room.getWalls()){
-		if (w.getV1().isSelected()){
-			w.getV1().move(x-25/2, y-25/2);
-			mm.graph.repaint();
-		}
-		if (w.getV2().isSelected()){
-			w.getV2().move(x-25/2, y-25/2);
-			mm.graph.repaint();
-		}
+			if(w.isSelected()){
+				float[] list=w.move(x, y);
+				mm.room.nextWall(w).getV1().move(list[2], list[3]);
+				mm.room.lastWall(w).getV2().move(list[0], list[1]);
+				mm.graph.repaint();
+			}	
+			else if (w.getV1().isSelected()){
+				w.getV1().move(x-25/2, y-25/2);
+				mm.graph.repaint();
+			}
+			else if (w.getV2().isSelected()){
+				w.getV2().move(x-25/2, y-25/2);
+				mm.graph.repaint();
+			}
 		}
 		
 		
