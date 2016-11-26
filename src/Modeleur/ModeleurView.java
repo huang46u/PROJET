@@ -34,7 +34,8 @@ public class ModeleurView extends JFrame {
 	/** ModeleurController qui gere les fonctions de souris */
 	private ModeleurController mc;
 	
-	//code Model
+	// les variables de tests
+	// Diriger et claser a la fin pour les mettre dans la class ModeleurModel
 	private JPanel bg, toolbar, options, save;
 	private Menu menu;
 	private Image demo;
@@ -46,9 +47,10 @@ public class ModeleurView extends JFrame {
 		mm = new ModeleurModel();
 		mc = new ModeleurController(mm);
 		
+		// bg contient le toolbar et le graphe
 		bg = new JPanel();
 		bg.setLayout(new BorderLayout(10,10));
-		bg.setBackground(ModeleurModel.GREY);
+		bg.setBackground(ModeleurModel.BLACK);
 		bg.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		// toolbar contient menu et save
@@ -118,8 +120,8 @@ public class ModeleurView extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			mm.room.addVertex();
-			//mm.room.addDoor("Door");
+			//mm.room.addVertex();
+			mm.room.addDoor("Door");
 			mm.graph.validate();
 			mm.graph.repaint();
 		}

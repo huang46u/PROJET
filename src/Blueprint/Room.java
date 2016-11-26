@@ -64,18 +64,9 @@ public class Room {
 	}
 	
 	public void addDoor(String id){
-		
 		for(Wall w: walls){
 			if(w.isSelected()){
 				w.addDoor(id);
-			}
-		}
-	}
-	
-	public void moveDoor(int x, int y){
-		for (Wall w : walls){
-			if(w.isSelected()){
-				w.move(x, y);
 			}
 		}
 	}
