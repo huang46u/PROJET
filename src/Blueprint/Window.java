@@ -8,13 +8,12 @@ public class Window extends Open {
 
 	public Window(String id, Vertex v1, Vertex v2) {
 		super(id, v1, v2);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-		
+		v1.draw(g);
+		v2.draw(g);
 	}
 
 	@Override

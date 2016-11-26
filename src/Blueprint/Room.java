@@ -71,6 +71,15 @@ public class Room {
 		}
 	}
 	
+	public void addWindow(String id) {
+		for(Wall w: walls){
+			if(w.isSelected()){
+				w.addWindow(id);
+			}
+		}
+		
+	}
+	
 	public void draw(Graphics g){
 		for (Wall w : walls){
 			w.draw(g);
@@ -154,4 +163,6 @@ public class Room {
 				in.close();
 		}	
 	}
+
+	
 }

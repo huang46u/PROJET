@@ -52,24 +52,11 @@ public class Wall {
 		selected = !selected;	
 	}
 	
-	public void select(int x, int y){
-		if(selected) {
-			selected=!selected;
-			return;
-			}
-		
-		float disX = v2.getX()-v1.getX();
-		float disY = v2.getY()-v1.getY();
-		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
-		float supX = r * (disX/disXY);
-		float supY = r * (disY/disXY);
-		
-		Line2D l = new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2);
-		
-		float maxX=v1.getX()+r+supX*2;
-		float minX=v2.getX()+r-supX*2;
-		float maxY=v1.getY()+r+supY*2;
-		float minY=v2.getY()+r-supY*2;
+	public boolean between(int x, int y, float x1, float y1, float x2, float y2){
+		float maxX=x1;
+		float minX=x2;
+		float maxY=y1;
+		float minY=y2;
 		
 		if(maxX<minX){
 			float tmp=maxX;
@@ -89,13 +76,65 @@ public class Wall {
 		if(minX==maxX) betweenX=true;
 		if(maxY==minY) betweenY=true;
 		
-		if (l.ptLineDist(x, y) <= r && betweenX && betweenY){
-			selected=true;			
-		}
-		else{
-			selected=false;
-		}
+		return betweenX && betweenY;
+	}
+	
+	public void select(int x, int y){
+		if(selected) {
+			selected=!selected;
+			return;
+			}
 		
+		float disX = v2.getX()-v1.getX();
+		float disY = v2.getY()-v1.getY();
+		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
+		float supX = r * (disX/disXY);
+		float supY = r * (disY/disXY);
+		
+		Line2D l = new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2);
+		
+		if (o == null){
+			
+			float maxX=v1.getX()+r+supX*2;
+			float minX=v2.getX()+r-supX*2;
+			float maxY=v1.getY()+r+supY*2;
+			float minY=v2.getY()+r-supY*2;
+			
+			if(maxX<minX){
+				float tmp=maxX;
+				maxX=minX;
+				minX=tmp;
+			}
+			
+			if(maxY<minY){
+				float tmp=maxY;
+				maxY=minY;
+				minY=tmp;
+			}
+			
+			boolean betweenX= x <= maxX && x >= minX ;
+			boolean betweenY= y <= maxY && y >= minY;
+			
+			if(minX==maxX) betweenX=true;
+			if(maxY==minY) betweenY=true;
+			
+			if (l.ptLineDist(x, y) <= r && betweenX && betweenY){
+				selected=true;			
+			}
+			else{
+				selected=false;
+			}
+		
+		} else{
+			if(l.ptLineDist(x,y) <= r && ( between(x,y,v1.getX()+r+supX*2,v1.getY()+r+supY*2,o.getV1().getX()+r-supX*2,o.getV1().getY()+r-supY*2)
+										|| between(x,y,o.getV1().getX()+r+supX*2,o.getV1().getY()+r+supY*2,o.getV2().getX()+r-supX*2,o.getV2().getY()+r-supY*2)
+										|| between(x,y,o.getV2().getX()+r+supX*2,o.getV2().getY()+r+supY*2,v2.getX()+r-supX*2,v2.getY()+r-supY*2)
+										)){
+				selected = true;
+			}else{
+				selected=false;
+			}
+		}
 	}
 	
 	public float[] move(float x, float y){
@@ -116,7 +155,7 @@ public class Wall {
 		}
 		else {
 			
-			float a1=(v2.getX()-v1.getX())/(v2.getY()-v1.getY());
+			float a1=(v2.getY()-v1.getY())/(v2.getX()-v1.getX());
 			float b1=v1.getY()-a1*v1.getX();
 			float a2=-1/a1;
 			float b2=y-a2*x;
@@ -128,19 +167,6 @@ public class Wall {
 			v1y=v1.getY()+my;
 			v2x=v2.getX()+mx;
 			v2y=v2.getY()+my;
-			
-			//System.out.println("############################# ");
-			
-			//float a1=(v2.getX()-v1.getX())/(v2.getY()-v1.getY());
-			//float a2=-1/a1;	
-			//float b3=y-a1*x;
-			//float v1b= v1.getY()-a2*v1.getX();
-			//float v1x= (v1b-b3)/(a1-a2);
-			//float v1y= a1*v1x+b3;
-			//float v2b= v2.getY()-a2*v2.getX();
-			//float v2x= (v2b-b3)/(a1-a2);
-			//float v2y= a1*v2x+b3;
-			//System.out.println(v1b+" "+v2b);
 	
 		}
 		v1.move(v1x, v1y);
@@ -166,7 +192,7 @@ public class Wall {
 		v2.draw(g);
 		
 		if(o!=null){
-			addDoor(o.getID());
+			//addDoor(o.getID());
 			o.draw(g);
 		}
 	
@@ -216,6 +242,14 @@ public class Wall {
 		Vertex c1 = new Vertex(f,g);
 		Vertex c2 = new Vertex(h,i);
 		o = new Door(id, c1, c2);
+	}
+	
+	public void addWindow(String id) {
+		float midX=(v1.getX()+v2.getX())/2;
+		float midY=(v1.getY()+v2.getY())/2;
+		Vertex c1 = new Vertex((v1.getX()+midX)/2,(v1.getY()+midY)/2);
+		Vertex c2 = new Vertex((v2.getX()+midX)/2,(v2.getY()+midY)/2);
+		o = new Window(id, c1, c2);
 	}
 	
 }

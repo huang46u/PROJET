@@ -43,7 +43,9 @@ public class ModeleurModel {
 	/** Une entiere qui signifie le mode de dessiner: 1 - Chambre(Room) ; 2 - Couloir(Corridor) */
 	protected int mode=1;
 	
-	// les variables qu'on definit pour le test 
+	// les variables qu'on definit pour le test
+	protected JPanel p1,p2;
+	protected JButton b1,b2,b3,b4;
 	protected Room room = new Room(4,"Rectangle");
 	
 	/**

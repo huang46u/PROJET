@@ -40,6 +40,10 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			w.getV1().select(x, y);
 			w.getV2().select(x, y);
 			w.select(x, y);
+			if(w.getOpen()!=null){
+				w.getOpen().getV1().select(x, y);
+				w.getOpen().getV2().select(x, y);
+			}
 			mm.graph.repaint();
 		}
 		
