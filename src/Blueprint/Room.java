@@ -100,6 +100,24 @@ public class Room {
 		gl.glEnd();
 	}
 	
+	public void draw(GL2 gl, float tT, float tB, float tL, float tR){
+		for (Wall w : walls){
+			w.draw(gl, tT,  tB,  tL, tR);
+		}
+		
+		gl.glBegin(GL2.GL_POLYGON);
+		for(Wall w : walls){
+			gl.glVertex3f(w.getV1().getX()/100, 0.0f, w.getV1().getY()/100);
+			}
+		gl.glEnd();
+		
+		gl.glBegin(GL2.GL_POLYGON);
+		for(Wall w : walls){
+			gl.glVertex3f(w.getV1().getX()/100, 2.0f, w.getV1().getY()/100);
+			}
+		gl.glEnd();
+	}
+	
 	public Wall nextWall(Wall w){
 		int n=walls.indexOf(w);
 		if(n==walls.size()-1){

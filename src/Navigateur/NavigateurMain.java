@@ -1,23 +1,23 @@
+/**
+ * PT3 Poly Editor
+ * DUT Informatique 2016/2017 
+ * Auteur : HUANG Qijia
+ * 			LU Yi
+ * Tuteur : P. Even
+ * */
+
 package Navigateur;
 
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.Menu;
 import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-
-import Blueprint.Room;
 
 @SuppressWarnings("serial")
 public class NavigateurMain extends JFrame {
@@ -30,7 +30,7 @@ public class NavigateurMain extends JFrame {
 	private static final int CANVAS_HEIGHT = 600;
 	/** frames par second de l'animateur */
 	private static final int FPS = 60;
-
+	
 	/** Constructeur pour creer le container et l'animator*/
 	public NavigateurMain() {
 		// Creer le OpenGL rendering canvas
@@ -48,9 +48,8 @@ public class NavigateurMain extends JFrame {
 
 		final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
 
-		final JFrame frame = new JFrame();
-		frame.getContentPane().add(canvas);
-		frame.addWindowListener(new WindowAdapter(){
+		model.frame.getContentPane().add(canvas);
+		model.frame.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
 				new Thread() {
 					public void run() {
@@ -62,52 +61,19 @@ public class NavigateurMain extends JFrame {
 		});
 
 		MenuBar bar;  
-		Menu fileMenu;  
-		MenuItem closeItem; 
-		MenuItem openItem;  
-		FileDialog openDia;		     
-
+		Menu fileMenu; 
 		bar = new MenuBar();  
-		fileMenu = new Menu("Fichier"); 
-
-		openItem = new MenuItem("Ouvrir");     
-		closeItem = new MenuItem("Exit"); 
-
-		fileMenu.add(openItem);     
-		fileMenu.add(closeItem);  
+		fileMenu = new Menu("Fichier"); 	
+		fileMenu.add(model.openItem);     
+		fileMenu.add(model.closeItem);  
+		fileMenu.add(model.menutexture);
+		model.closeItem.addActionListener(controller);
+		model.openItem.addActionListener(controller);
+		model.menutexture.addActionListener(controller);
 		bar.add(fileMenu);  
 
-		frame.setMenuBar(bar);    
-		openDia = new FileDialog(frame,"Ouvrir",FileDialog.LOAD);
-
-		openItem.addActionListener(new ActionListener()  
-		{  
-			public void actionPerformed(ActionEvent e)  
-			{  
-				openDia.setVisible(true);  
-				String dirPath = openDia.getDirectory();  
-				String fileName = openDia.getFile(); 
-				File file = new File(dirPath,fileName);  	
-				Room r= new Room(4, "Rectangle");	
-				try {
-					r.read(fileName);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}	
-			}	
-		});  
-
-		closeItem.addActionListener(new ActionListener()  
-		{  
-			//ÉèÖÃÍË³ö¹¦ÄÜ  
-			public void actionPerformed(ActionEvent e)  
-			{  
-				System.exit(0);  
-			}  
-		});  
-
-		frame.addWindowListener(new WindowAdapter()  
+		model.frame.setMenuBar(bar);    
+		model.frame.addWindowListener(new WindowAdapter()  
 		{  
 			public void windowClosing(WindowEvent e)  
 			{  
@@ -115,11 +81,12 @@ public class NavigateurMain extends JFrame {
 			}  
 		});  
 	  
-	frame.setTitle(TITLE);
-	frame.pack();
-	frame.setVisible(true);
-	animator.start();
-}
+		model.frame.setTitle(TITLE);
+		model.frame.pack();
+		model.frame.setVisible(true);
+		animator.start();
+		
+}	
 
 
 public static void main(String[] args) {
