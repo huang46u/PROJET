@@ -213,6 +213,38 @@ public class Wall {
 		o = new Window(id, c1, c2);
 	}
 	
+	public float[] moveOpen(float x, float y){
+		float mx,my;
+		if (v1.getX()==v2.getX()){
+			mx=v1.getX();
+			my=y;
+		} else if (v1.getY()==v2.getY()){
+			my=v1.getY();
+			mx=x;
+		} else {
+			float a1=(v1.getY()-v2.getY())/(v1.getX()-v2.getX());
+			float b1=v1.getY()-a1*v1.getX();
+			float a2=-1/a1;
+			float b2=y-a2*x;
+			mx=(b2-b1)/(a1-a2);
+			my=a1*mx+b1;
+		}
+		
+		float[] l={mx,my};
+
+		return l;
+	}
+	
+	public float ratioOpen(float x, float y){
+		float disX = v2.getX()-v1.getX();
+		float disY = v2.getY()-v1.getY();
+		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
+		float disV1X = v1.getX()-x;
+		float disV1Y = v1.getY()-y;
+		float disV1XY = (float) Math.sqrt(disV1X*disV1X+disV1Y*disV1Y);
+		return disV1XY/disXY;
+	}
+	
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		if (selected){

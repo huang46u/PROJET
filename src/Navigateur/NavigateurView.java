@@ -28,7 +28,6 @@ import static com.jogamp.opengl.GL2ES1.GL_FOG_HINT;
 import static com.jogamp.opengl.GL2ES1.GL_FOG_MODE;
 import static com.jogamp.opengl.GL2ES1.GL_FOG_START;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
-import static com.jogamp.opengl.GL2ES3.GL_QUADS;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_AMBIENT;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_DIFFUSE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_LIGHT1;
@@ -47,13 +46,10 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.TextureIO;
 
 import Blueprint.Room;
-import Blueprint.Vertex;
-import Blueprint.Wall;
 
 @SuppressWarnings("serial")
 public class NavigateurView extends GLCanvas implements GLEventListener{
@@ -92,7 +88,7 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		glu = new GLU();
-		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // clear to the color of the fog
+		gl.glClearColor(0.8f, 0.8f, 0.8f, 1.0f); // clear to the color of the fog
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST);
 		gl.glDepthFunc(GL_LEQUAL);
@@ -187,8 +183,8 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		r.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);
-
+		//r.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);
+		r.draw(gl);
 	    // r.draw(gl);
 	     
 	}
