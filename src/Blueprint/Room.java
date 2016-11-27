@@ -181,7 +181,11 @@ public class Room {
 	        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
 	        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
 	        	 if (scanner.hasNext()){
-	        		 walls.get(walls.size()-1).addDoor(scanner.next(), scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+	        		 if(scanner.next().contains("Door")){
+	        			 walls.get(walls.size()-1).addDoor(scanner.next(), scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+	        		 } else if (scanner.next().contains("Window")){
+	        			 walls.get(walls.size()-1).addWindow(scanner.next(), scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+	        		 }
 	        	 }
 	         }
 		} finally {

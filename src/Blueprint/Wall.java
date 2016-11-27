@@ -213,6 +213,12 @@ public class Wall {
 		o = new Window(id, c1, c2);
 	}
 	
+	public void addWindow(String id, float f, float g, float h, float i) {
+		Vertex c1 = new Vertex(f,g);
+		Vertex c2 = new Vertex(h,i);
+		o = new Window(id, c1, c2);
+	}
+	
 	public float[] moveOpen(float x, float y){
 		float mx,my;
 		if (v1.getX()==v2.getX()){
@@ -487,5 +493,7 @@ public class Wall {
 		
 		gl.glEnd();
 	}
+
+	
 	
 }
