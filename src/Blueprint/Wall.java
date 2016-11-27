@@ -361,22 +361,9 @@ public class Wall {
 			
 			gl.glEnd();
 		} else {
-			gl.glBegin(GL2.GL_QUADS);
-			
-			gl.glColor3f(0.8f, 0.3f, 0.8f);
-			gl.glVertex3f(v1.getX()/100, 1.0f, v1.getY()/100);
-			gl.glVertex3f(o.getV1().getX()/100, 1.0f, o.getV1().getY()/100);
-			gl.glVertex3f(o.getV1().getX()/100, 0.0f, o.getV1().getY()/100);
-			gl.glVertex3f(v1.getX()/100, 0.0f, v1.getY()/100);
-			
+			new Wall(v1,o.getV1()).draw(gl);
 			o.draw(gl);
-			
-			gl.glVertex3f(o.getV2().getX()/100, 1.0f, o.getV2().getY()/100);
-			gl.glVertex3f(v2.getX()/100, 1.0f, v2.getY()/100);
-			gl.glVertex3f(v2.getX()/100, 0.0f, v2.getY()/100);
-			gl.glVertex3f(o.getV2().getX()/100, 0.0f, o.getV2().getY()/100);
-		
-		gl.glEnd();
+			new Wall(o.getV2(),v2).draw(gl);
 		}
 	}
 	
