@@ -56,9 +56,10 @@ public class Room {
 		}
 		v3 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
 		v4 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
+		int index = walls.indexOf(tmp);
 		walls.remove(tmp);
-		walls.add(new Wall(v1, v3));
-		walls.add(new Wall(v4, v2));
+		walls.add(index,new Wall(v4, v2));
+		walls.add(index,new Wall(v1, v3));
 		v3.select();
 		v4.select();
 	}
@@ -89,7 +90,14 @@ public class Room {
 	public void draw(GL2 gl){
 		for (Wall w : walls){
 			w.draw(gl);
-		}	
+		}
+		
+		gl.glBegin(GL2.GL_POLYGON);
+		gl.glColor3f(0.8f, 0.3f, 0.8f);
+			for (Wall w: walls){
+				gl.glVertex3f(w.getV1().getX()/100, 0.0f, w.getV1().getY()/100);
+			}
+		gl.glEnd();
 	}
 	
 	public Wall nextWall(Wall w){

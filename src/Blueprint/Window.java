@@ -22,4 +22,11 @@ public class Window extends Open {
 		
 	}
 
+	@Override
+	public void move(float x1, float y1, float x2, float y2) {
+		v1.move(x1, y1);
+		v2.move(x2, y2);
+		
+	}
+
 }

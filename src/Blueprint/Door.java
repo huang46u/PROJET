@@ -25,7 +25,13 @@ public class Door extends Open {
 		gl.glVertex3f(v2.getX()/100, 1.0f, v2.getY()/100);
 		gl.glVertex3f(v2.getX()/100, 0.8f, v2.getY()/100);
 		gl.glVertex3f(v1.getX()/100, 0.8f, v1.getY()/100);
-		
+	}
+
+	@Override
+	public void move(float x1, float y1, float x2, float y2) {
+		v1.move(x1, y1);
+		v2.move(x2, y2);
+		midv.move((x1+x2)/2,(y1+y2)/2);
 	}
 
 }

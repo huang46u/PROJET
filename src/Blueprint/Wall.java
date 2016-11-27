@@ -23,7 +23,7 @@ public class Wall {
 	private boolean selected=false;
 	private Open o=null;
 	
-	//Rayon
+	/** Rayon de Vertex */
 	private float r = 25/2;
 
 	public Wall(Vertex v1, Vertex v2) {
@@ -192,7 +192,7 @@ public class Wall {
 		v2.draw(g);
 		
 		if(o!=null){
-			//addDoor(o.getID());
+			updateOpen();
 			o.draw(g);
 		}
 	
@@ -242,6 +242,20 @@ public class Wall {
 		Vertex c1 = new Vertex(f,g);
 		Vertex c2 = new Vertex(h,i);
 		o = new Door(id, c1, c2);
+	}
+	
+	public void updateOpen(){
+		float disX = v2.getX()-v1.getX();
+		float disY = v2.getY()-v1.getY();
+		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
+		float f1 = o.getR1() * disXY;
+		float f2 = o.getR2() * disXY;
+		float supX1 = f1 * (disX/disXY);
+		float supY1 = f1 * (disY/disXY);
+		float supX2 = f2 * (disX/disXY);
+		float supY2 = f2 * (disY/disXY);
+		o.move(v1.getX()+supX1, v1.getY()+supY1, v1.getX()+supX2, v1.getY()+supY2);
+		
 	}
 	
 	public void addWindow(String id) {
