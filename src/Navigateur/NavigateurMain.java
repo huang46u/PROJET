@@ -23,7 +23,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 public class NavigateurMain extends JFrame {
 	// Definir les constants
 	/** nom de la fenetre */
-	private static String TITLE = "Escape Demo";
+	private static String TITLE = "Poly Editor - Navigateur";
 	/** largeur de canvas */
 	private static final int CANVAS_WIDTH = 800;
 	/** longeur de canvas */
