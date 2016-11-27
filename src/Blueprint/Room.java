@@ -49,8 +49,8 @@ public class Room {
 		
 		for(Wall w: walls){
 			if(w.isSelected()){    //il faut verifier si Open dans le mur est NULL
-				v1 = w.getV1();
-				v2 = w.getV2();	
+				v1 = new Vertex(w.getV1().getX(),w.getV1().getY());
+				v2 = new Vertex(w.getV2().getX(),w.getV2().getY());	
 				tmp=w;
 			}
 		}

@@ -12,7 +12,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -35,9 +38,9 @@ public class ModeleurView extends JFrame {
 	
 	// les variables de tests
 	// Diriger et claser a la fin pour les mettre dans la class ModeleurModel
-	private JPanel bg, toolbar, options, save;
-	private Menu menu;
-	private Image demo;
+	
+	protected Menu menu;
+	protected Image demo;
 	
 	
 	
@@ -48,33 +51,61 @@ public class ModeleurView extends JFrame {
 		mc = new ModeleurController(mm);
 		
 		// bg contient le toolbar et le graphe
-		bg = new JPanel();
-		bg.setLayout(new BorderLayout(10,10));
-		bg.setBackground(ModeleurModel.GREY);
-		bg.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		mm.bg = new JPanel();
+		mm.bg.setLayout(new BorderLayout(10,10));
+		mm.bg.setBackground(ModeleurModel.GREY);
+		mm.bg.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		// toolbar contient menu et save
-		toolbar = new JPanel();
-		toolbar.setLayout(new BorderLayout(10,10));
-		toolbar.setBackground(ModeleurModel.DARKGREY2);
+		mm.toolbar = new JPanel();
+		mm.toolbar.setLayout(new BorderLayout(10,10));
+		mm.toolbar.setBackground(ModeleurModel.DARKGREY2);
 		
 		// menu contient options
 		menu = new Menu();
 		menu.setPreferredSize(new Dimension(130*2,420*2));
 		menu.addMouseListener(menu);
 		
+		Font font = new Font("Arial", Font.BOLD, 20);
+		
 		// options contient les buttons
-		options = new JPanel();
-		options.setBackground(ModeleurModel.DARKGREY4);
-		options.setPreferredSize(new Dimension(120*2,50*2));
+		mm.opts = new JPanel(new GridBagLayout());
+		mm.opts.setBackground(ModeleurModel.DARKGREY2);
+		mm.opts.setPreferredSize(new Dimension(130*2,420*2));
+		
+		GridBagConstraints g = new GridBagConstraints();
+		
+		mm.bRoom= new JButton("CHAMBRE");
+		mm.bRoom.setFont(font);
+		mm.bRoom.setForeground(ModeleurModel.BLACK);
+		mm.bRoom.setBackground(ModeleurModel.DARKGREY4);
+		mm.bRoom.setPreferredSize(new Dimension(110*2,70));
+		mm.bRoom.setFocusPainted(false);
+		mm.bRoom.addActionListener(mc);
+		
+		mm.bCorridor = new JButton("COULOIR");
+		mm.bCorridor.setFont(font);
+		mm.bCorridor.setForeground(ModeleurModel.BLACK);
+		mm.bCorridor.setBackground(ModeleurModel.DARKGREY4);
+		mm.bCorridor.setPreferredSize(new Dimension(110*2,70));
+		mm.bCorridor.setFocusPainted(false);
+		mm.bCorridor.addActionListener(mc);
+		
+		g.gridx = 0;
+		g.gridy = 1;
+		g.insets= new Insets(10,0,10,0);
+		mm.opts.add(mm.bRoom,g);
+		g.gridy = 2;
+		mm.opts.add(mm.bCorridor, g);
+		
 		
 		// save contient bsave
-		save = new JPanel();
-		save.setBackground(ModeleurModel.DARKGREY2);
-		save.setPreferredSize(new Dimension(130*2,45*2));
+		mm.save = new JPanel();
+		mm.save.setBackground(ModeleurModel.DARKGREY2);
+		mm.save.setPreferredSize(new Dimension(130*2,45*2));
 		
 		// le bouton d'enregistrement
-		Font font = new Font("Arial", Font.BOLD, 20);
+		
 		mm.bSave = new JButton("ENREGISTRER");
 		mm.bSave.setFont(font);
 		mm.bSave.setForeground(ModeleurModel.BLACK);
@@ -82,19 +113,20 @@ public class ModeleurView extends JFrame {
 		mm.bSave.setPreferredSize(new Dimension(110*2,70));
 		mm.bSave.setFocusPainted(false);
 		mm.bSave.addActionListener(mc);
-		save.add(mm.bSave);
+		mm.save.add(mm.bSave);
 		
 		mm.graph.setPreferredSize(new Dimension(550*2,340*2));
 		mm.graph.addMouseListener(mc);
 		mm.graph.addMouseMotionListener(mc);
 		
-		toolbar.add(menu, BorderLayout.CENTER);
-		toolbar.add(save, BorderLayout.SOUTH);
+		//toolbar.add(menu, BorderLayout.CENTER);
+		mm.toolbar.add(mm.opts, BorderLayout.CENTER);
+		mm.toolbar.add(mm.save, BorderLayout.SOUTH);
 		
-		bg.add(mm.graph, BorderLayout.CENTER);
-		bg.add(toolbar, BorderLayout.WEST);
+		mm.bg.add(mm.graph, BorderLayout.CENTER);
+		mm.bg.add(mm.toolbar, BorderLayout.WEST);
 		
-		this.add(bg);
+		this.add(mm.bg);
 		
 	}
 	

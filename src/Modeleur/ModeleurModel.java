@@ -9,6 +9,8 @@
 package Modeleur;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -39,12 +41,67 @@ public class ModeleurModel {
 	protected JButton bSave;
 	
 	/** Une entiere qui signifie le mode de dessiner: 1 - Chambre(Room) ; 2 - Couloir(Corridor) */
-	protected int mode=1;
+	protected int mode=0;
+	
+	protected JPanel bg, toolbar, opts, save;
 	
 	// les variables qu'on definit pour le test
 	protected JPanel p1,p2;
-	protected JButton b1,b2,b3,b4;
+	
+	protected JButton bRoom,bCorridor,bRectangle,bHexagon,bOctogon,bVertx,bDoor,bWindow;
+	
 	protected Room room = new Room(4,"Rectangle");
+	
+	/** rayon de Vertex */
+	protected float r=(float)25/2;
+	
+	/** Constructeur par default */
+	public ModeleurModel(){
+		Font font = new Font("Arial", Font.BOLD, 20);
+		
+		bVertx= new JButton("+ POINT");
+		bVertx.setFont(font);
+		bVertx.setForeground(ModeleurModel.BLACK);
+		bVertx.setBackground(ModeleurModel.DARKGREY4);
+		bVertx.setPreferredSize(new Dimension(110*2,70));
+		bVertx.setFocusPainted(false);
+		
+		bDoor= new JButton("+ PORTE");
+		bDoor.setFont(font);
+		bDoor.setForeground(ModeleurModel.BLACK);
+		bDoor.setBackground(ModeleurModel.DARKGREY4);
+		bDoor.setPreferredSize(new Dimension(110*2,70));
+		bDoor.setFocusPainted(false);
+		
+		bWindow= new JButton("+ FENETRE");
+		bWindow.setFont(font);
+		bWindow.setForeground(ModeleurModel.BLACK);
+		bWindow.setBackground(ModeleurModel.DARKGREY4);
+		bWindow.setPreferredSize(new Dimension(110*2,70));
+		bWindow.setFocusPainted(false);
+		
+		bRectangle= new JButton("RECTANGLE");
+		bRectangle.setFont(font);
+		bRectangle.setForeground(ModeleurModel.BLACK);
+		bRectangle.setBackground(ModeleurModel.DARKGREY4);
+		bRectangle.setPreferredSize(new Dimension(110*2,70));
+		bRectangle.setFocusPainted(false);
+		
+		bHexagon= new JButton("HEXAGONE");
+		bHexagon.setFont(font);
+		bHexagon.setForeground(ModeleurModel.BLACK);
+		bHexagon.setBackground(ModeleurModel.DARKGREY4);
+		bHexagon.setPreferredSize(new Dimension(110*2,70));
+		bHexagon.setFocusPainted(false);
+		
+		bOctogon= new JButton("OCTOGONE");
+		bOctogon.setFont(font);
+		bOctogon.setForeground(ModeleurModel.BLACK);
+		bOctogon.setBackground(ModeleurModel.DARKGREY4);
+		bOctogon.setPreferredSize(new Dimension(110*2,70));
+		bOctogon.setFocusPainted(false);
+		
+	}
 	
 	/**
 	 * class interne Graph

@@ -73,64 +73,65 @@ public class Window extends Open {
 		gl.glBegin(GL2.GL_QUADS);
 		
 			gl.glColor3f(1.0f, 0.0f, 0.0f); 
-			gl.glVertex3f(X1/100, 2.0f, Z1/100);
-			gl.glVertex3f(X2/100, 2.0f, Z2/100);
-			gl.glVertex3f(X2/100, 1.5f, Z2/100);
-			gl.glVertex3f(X1/100, 1.5f, Z1/100);
+			gl.glVertex3f(X1/100, 1.0f, Z1/100);
+			gl.glVertex3f(X2/100, 1.0f, Z2/100);
+			gl.glVertex3f(X2/100, 0.75f, Z2/100);
+			gl.glVertex3f(X1/100, 0.75f, Z1/100);
 			
-			gl.glVertex3f(X1/100, 2.0f, Z1/100);
-			gl.glVertex3f(X3/100, 2.0f, Z3/100);
-			gl.glVertex3f(X3/100, 1.5f, Z3/100);
-			gl.glVertex3f(X1/100, 1.5f, Z1/100);
-		
-			gl.glVertex3f(X2/100, 2.0f, Z2/100);
-			gl.glVertex3f(X4/100, 2.0f, Z4/100);
-			gl.glVertex3f(X4/100, 1.5f, Z4/100);
-			gl.glVertex3f(X2/100, 1.5f, Z2/100);
-		
-			gl.glVertex3f(X3/100, 2.0f, Z3/100);
-			gl.glVertex3f(X4/100, 2.0f, Z4/100);
-			gl.glVertex3f(X4/100, 1.5f, Z4/100);
+			gl.glVertex3f(X1/100, 1.0f, Z1/100);
 			gl.glVertex3f(X3/100, 1.0f, Z3/100);
+			gl.glVertex3f(X3/100, 0.75f, Z3/100);
+			gl.glVertex3f(X1/100, 0.75f, Z1/100);
+		
+			gl.glVertex3f(X2/100, 1.0f, Z2/100);
+			gl.glVertex3f(X4/100, 1.0f, Z4/100);
+			gl.glVertex3f(X4/100, 0.75f, Z4/100);
+			gl.glVertex3f(X2/100, 0.75f, Z2/100);
+		
+			gl.glVertex3f(X3/100, 1.0f, Z3/100);
+			gl.glVertex3f(X4/100, 1.0f, Z4/100);
+			gl.glVertex3f(X4/100, 0.75f, Z4/100);
+			gl.glVertex3f(X3/100, 0.75f, Z3/100);
 
-			gl.glVertex3f(X1/100, 2.0f, Z1/100);
-			gl.glVertex3f(X2/100, 2.0f, Z2/100);
-			gl.glVertex3f(X4/100, 2.0f, Z4/100);
-			gl.glVertex3f(X3/100, 2.0f, Z3/100);
+			gl.glVertex3f(X1/100, 1.0f, Z1/100);
+			gl.glVertex3f(X2/100, 1.0f, Z2/100);
+			gl.glVertex3f(X4/100, 1.0f, Z4/100);
+			gl.glVertex3f(X3/100, 1.0f, Z3/100);
 			
-			gl.glVertex3f(X1/100, 1.5f, Z1/100);
-			gl.glVertex3f(X2/100, 1.5f, Z2/100);
-			gl.glVertex3f(X4/100, 1.5f, Z4/100);
-			gl.glVertex3f(X3/100, 1.5f, Z3/100);
+			gl.glVertex3f(X1/100, 0.75f, Z1/100);
+			gl.glVertex3f(X2/100, 0.75f, Z2/100);
+			gl.glVertex3f(X4/100, 0.75f, Z4/100);
+			gl.glVertex3f(X3/100, 0.75f, Z3/100);
 
-			/*gl.glVertex3f(X1/100, 0.5f, Z1/100);
-			gl.glVertex3f(X2/100, 0.5f, Z2/100);
+			gl.glVertex3f(X1/100, 0.3f, Z1/100);
+			gl.glVertex3f(X2/100, 0.3f, Z2/100);
 			gl.glVertex3f(X2/100, 0.0f, Z2/100);
 			gl.glVertex3f(X1/100, 0.0f, Z1/100);
 			
-			gl.glVertex3f(X1/100, 0.5f, Z1/100);
-			gl.glVertex3f(X3/100, 0.5f, Z3/100);
+			gl.glVertex3f(X1/100, 0.3f, Z1/100);
+			gl.glVertex3f(X3/100, 0.3f, Z3/100);
 			gl.glVertex3f(X3/100, 0.0f, Z3/100);
 			gl.glVertex3f(X1/100, 0.0f, Z1/100);
 		
-			gl.glVertex3f(X2/100, 0.5f, Z2/100);
-			gl.glVertex3f(X4/100, 0.5f, Z4/100);
+			gl.glVertex3f(X2/100, 0.3f, Z2/100);
+			gl.glVertex3f(X4/100, 0.3f, Z4/100);
 			gl.glVertex3f(X4/100, 0.0f, Z4/100);
 			gl.glVertex3f(X2/100, 0.0f, Z2/100);
 		
-			gl.glVertex3f(X3/100, 0.5f, Z3/100);
-			gl.glVertex3f(X4/100, 0.5f, Z4/100);
+			gl.glVertex3f(X3/100, 0.3f, Z3/100);
+			gl.glVertex3f(X4/100, 0.3f, Z4/100);
 			gl.glVertex3f(X4/100, 0.0f, Z4/100);
 			gl.glVertex3f(X3/100, 0.0f, Z3/100);
-			gl.glVertex3f(X1/100, 0.5f, Z1/100);
-			gl.glVertex3f(X2/100, 0.5f, Z2/100);
-			gl.glVertex3f(X4/100, 0.5f, Z4/100);
-			gl.glVertex3f(X3/100, 0.5f, Z3/100);
+			
+			gl.glVertex3f(X1/100, 0.3f, Z1/100);
+			gl.glVertex3f(X2/100, 0.3f, Z2/100);
+			gl.glVertex3f(X4/100, 0.3f, Z4/100);
+			gl.glVertex3f(X3/100, 0.3f, Z3/100);
 			
 			gl.glVertex3f(X1/100, 0.0f, Z1/100);
 			gl.glVertex3f(X2/100, 0.0f, Z2/100);
 			gl.glVertex3f(X4/100, 0.0f, Z4/100);
-			gl.glVertex3f(X3/100, 0.0f, Z3/100);*/
+			gl.glVertex3f(X3/100, 0.0f, Z3/100);
 
 		gl.glEnd();
 		

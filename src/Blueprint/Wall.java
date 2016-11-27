@@ -275,7 +275,7 @@ public class Wall {
 	public void draw (GL2 gl)
 	{
 		if(o==null){
-			float weight = 20f;
+			float weight = 10f;
 			float b = 0;
 			float x =0;
 			float z =0;
@@ -329,23 +329,23 @@ public class Wall {
 			
 			gl.glBegin(GL2.GL_QUADS);
 			
-				gl.glVertex3f(X1/100, 2.0f, Z1/100);
-				gl.glVertex3f(X2/100, 2.0f, Z2/100);
+				gl.glVertex3f(X1/100, 1.0f, Z1/100);
+				gl.glVertex3f(X2/100, 1.0f, Z2/100);
 				gl.glVertex3f(X2/100, 0.0f, Z2/100);
 				gl.glVertex3f(X1/100, 0.0f, Z1/100);
 				
-				gl.glVertex3f(X1/100, 2.0f, Z1/100);
-				gl.glVertex3f(X3/100, 2.0f, Z3/100);
+				gl.glVertex3f(X1/100, 1.0f, Z1/100);
+				gl.glVertex3f(X3/100, 1.0f, Z3/100);
 				gl.glVertex3f(X3/100, 0.0f, Z3/100);
 				gl.glVertex3f(X1/100, 0.0f, Z1/100);
 			
-				gl.glVertex3f(X2/100, 2.0f, Z2/100);
-				gl.glVertex3f(X4/100, 2.0f, Z4/100);
+				gl.glVertex3f(X2/100, 1.0f, Z2/100);
+				gl.glVertex3f(X4/100, 1.0f, Z4/100);
 				gl.glVertex3f(X4/100, 0.0f, Z4/100);
 				gl.glVertex3f(X2/100, 0.0f, Z2/100);
 			
-				gl.glVertex3f(X3/100, 2.0f, Z3/100);
-				gl.glVertex3f(X4/100, 2.0f, Z4/100);
+				gl.glVertex3f(X3/100, 1.0f, Z3/100);
+				gl.glVertex3f(X4/100, 1.0f, Z4/100);
 				gl.glVertex3f(X4/100, 0.0f, Z4/100);
 				gl.glVertex3f(X3/100, 0.0f, Z3/100);
 	
@@ -354,10 +354,10 @@ public class Wall {
 				gl.glVertex3f(X4/100, 0.0f, Z4/100);
 				gl.glVertex3f(X3/100, 0.0f, Z3/100);
 				
-				gl.glVertex3f(X1/100, 2.0f, Z1/100);
-				gl.glVertex3f(X2/100, 2.0f, Z2/100);
-				gl.glVertex3f(X4/100, 2.0f, Z4/100);
-				gl.glVertex3f(X3/100, 2.0f, Z3/100);
+				gl.glVertex3f(X1/100, 1.0f, Z1/100);
+				gl.glVertex3f(X2/100, 1.0f, Z2/100);
+				gl.glVertex3f(X4/100, 1.0f, Z4/100);
+				gl.glVertex3f(X3/100, 1.0f, Z3/100);
 			
 			gl.glEnd();
 		} else {
