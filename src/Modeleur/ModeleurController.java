@@ -8,18 +8,14 @@
 
 package Modeleur;
 
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
-
-import javax.swing.JButton;
 
 import Blueprint.Room;
 import Blueprint.Wall;
@@ -43,7 +39,6 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		int x = e.getX();
 		int y = e.getY();
 		
-		Font font = new Font("Arial", Font.BOLD, 20);
 		GridBagConstraints g = new GridBagConstraints();
 		
 		for (Wall w : mm.room.getWalls()){
@@ -51,25 +46,16 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			w.getV2().select(x, y);
 			w.select(x, y);
 			if(w.isSelected()){
-				mm.opts.remove(mm.bRectangle);
-				mm.opts.remove(mm.bHexagon);
-				mm.opts.remove(mm.bOctogon);
+				mm.toolbar.removeAll();
 				
 				mm.bVertx.addActionListener(this);
 				mm.bDoor.addActionListener(this);
 				mm.bWindow.addActionListener(this);
 				
-				g.gridx = 0;
-				g.gridy = 1;
-				g.insets= new Insets(10,0,10,0);
-				mm.opts.add(mm.bVertx,g);
-				g.gridy = 2;
-				mm.opts.add(mm.bDoor,g);
-				g.gridy = 3;
-				mm.opts.add(mm.bWindow,g);
-				
-				mm.opts.validate();
-				mm.opts.repaint();
+				mm.toolbar.add(mm.optsWall, BorderLayout.CENTER);
+				mm.toolbar.add(mm.save, BorderLayout.SOUTH);
+				mm.toolbar.validate();
+				mm.toolbar.repaint();
 			}
 			if(w.getOpen()!=null){
 				w.getOpen().getV1().select(x, y);
@@ -154,7 +140,6 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
-		Font font = new Font("Arial", Font.BOLD, 20);
 		GridBagConstraints g = new GridBagConstraints();
 		
 		if (source == mm.bSave){
@@ -167,24 +152,16 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			}
 		} else if (source == mm.bRoom){
 			mm.mode=1;
-			mm.opts.remove(mm.bRoom);
-			mm.opts.remove(mm.bCorridor);
+			mm.toolbar.removeAll();
 			
 			mm.bRectangle.addActionListener(this);
 			mm.bHexagon.addActionListener(this);
 			mm.bOctogon.addActionListener(this);
 			
-			g.gridx = 0;
-			g.gridy = 1;
-			g.insets= new Insets(10,0,10,0);
-			mm.opts.add(mm.bRectangle,g);
-			g.gridy = 2;
-			mm.opts.add(mm.bHexagon,g);
-			g.gridy = 3;
-			mm.opts.add(mm.bOctogon,g);
-			
-			mm.opts.validate();
-			mm.opts.repaint();
+			mm.toolbar.add(mm.optsRoom, BorderLayout.CENTER);
+			mm.toolbar.add(mm.save, BorderLayout.SOUTH);
+			mm.toolbar.validate();
+			mm.toolbar.repaint();
 			mm.graph.validate();
 			mm.graph.repaint();
 		} else if (source == mm.bCorridor){
@@ -195,10 +172,10 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.room = new Room(4,"Rectangle");
 			mm.graph.repaint();
 		} else if (source == mm.bHexagon){
-			mm.room = new Room(4,"Rectangle");
+			mm.room = new Room(6,"Hexagone");
 			mm.graph.repaint();
 		} else if (source == mm.bOctogon){
-			mm.room = new Room(4,"Rectangle");
+			mm.room = new Room(8,"Octogone");
 			mm.graph.repaint();
 		} else if (source == mm.bVertx){
 			mm.room.addVertex();
