@@ -21,9 +21,7 @@ import java.util.Scanner;
 
 import com.jogamp.opengl.GL2;
 
-public class Room {
-	private ArrayList<Wall> walls = new ArrayList();
-	private String id;
+public class Room extends Space {
 	
 	public Room(){
 		

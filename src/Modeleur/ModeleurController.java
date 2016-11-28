@@ -39,16 +39,30 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		int x = e.getX();
 		int y = e.getY();
 		
+		boolean selected=false;
 		GridBagConstraints g = new GridBagConstraints();
 		
 		for (Wall w : mm.room.getWalls()){
 			w.getV1().select(x, y);
+			if(w.getV1().isSelected()){
+				mm.toolbar.removeAll();
+				
+				mm.toolbar.add(mm.optsVertex, BorderLayout.CENTER);
+				mm.toolbar.add(mm.save, BorderLayout.SOUTH);
+				mm.toolbar.validate();
+				mm.toolbar.repaint();
+				
+				selected=true;
+			}
 			w.getV2().select(x, y);
+			if(w.getV2().isSelected()){
+				selected=true;
+			}
 			w.select(x, y);
 			if(w.isSelected()){
 				mm.toolbar.removeAll();
 				
-				mm.bVertx.addActionListener(this);
+				mm.bVertex.addActionListener(this);
 				mm.bDoor.addActionListener(this);
 				mm.bWindow.addActionListener(this);
 				
@@ -56,12 +70,28 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				mm.toolbar.add(mm.save, BorderLayout.SOUTH);
 				mm.toolbar.validate();
 				mm.toolbar.repaint();
+				
+				selected=true;
 			}
 			if(w.getOpen()!=null){
 				w.getOpen().getV1().select(x, y);
+				if(w.getOpen().getV1().isSelected()){
+					selected=true;
+				}
 				w.getOpen().getV2().select(x, y);
+				if(w.getOpen().getV2().isSelected()){
+					selected=true;
+				}
 			}
 			mm.graph.repaint();
+			
+			if(!selected){
+				mm.toolbar.removeAll();
+				mm.toolbar.add(mm.optsRoom, BorderLayout.CENTER);
+				mm.toolbar.add(mm.save, BorderLayout.SOUTH);
+				mm.toolbar.validate();
+				mm.toolbar.repaint();
+			}
 		}
 		
 	}
@@ -177,9 +207,16 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		} else if (source == mm.bOctogon){
 			mm.room = new Room(8,"Octogone");
 			mm.graph.repaint();
-		} else if (source == mm.bVertx){
+		} else if (source == mm.bVertex){
 			mm.room.addVertex();
 			mm.graph.repaint();
+			
+			mm.toolbar.removeAll();
+			mm.toolbar.add(mm.optsVertex, BorderLayout.CENTER);
+			mm.toolbar.add(mm.save, BorderLayout.SOUTH);
+			mm.toolbar.validate();
+			mm.toolbar.repaint();
+			
 		} else if (source == mm.bDoor){
 			mm.room.addDoor("Door");
 			mm.graph.repaint();
