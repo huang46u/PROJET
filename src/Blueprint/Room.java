@@ -64,6 +64,28 @@ public class Room extends Space {
 		}
 	}
 	
+	public void delVertex(){
+		Wall tmp =null;
+		Vertex v1=null;
+		for (Wall w:walls){
+			if(w.getV2().isSelected()){
+				tmp=w;
+				v1=w.getV1();
+			}
+		}
+		if (tmp != null){
+			Wall next = nextWall(tmp);
+			Vertex v2 = next.getV2();
+			int index = walls.indexOf(tmp);
+			walls.remove(tmp);
+			walls.add(index, new Wall(v1,v2));
+			walls.remove(next);
+			
+		}
+		
+		
+	}
+	
 	public void addDoor(String id){
 		for(Wall w: walls){
 			if(w.isSelected()){
@@ -134,11 +156,11 @@ public class Room extends Space {
 		return walls.get(n-1);
 	}
 	
-	public void write() throws IOException{
+	public void write(String filepath) throws IOException{
 		PrintWriter in = null;
 		try {
 	         in = new PrintWriter(
-	               new OutputStreamWriter(new FileOutputStream("test.txt")));
+	               new OutputStreamWriter(new FileOutputStream(filepath)));
 	         in.println(id);
 	         for(Wall w : walls){
 	        	 in.print(w.getV1().getX());

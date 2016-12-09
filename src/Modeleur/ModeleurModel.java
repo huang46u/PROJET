@@ -11,6 +11,7 @@ package Modeleur;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -19,6 +20,7 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Blueprint.Corridor;
@@ -54,6 +56,8 @@ public class ModeleurModel {
 	protected JPanel bg, toolbar, optsMode, optsRoom, optsWall, optsVertex, save;
 	
 	protected JButton bRoom, bCorridor, bRectangle, bHexagon, bOctogon, bVertex, bDoor, bWindow, bDelVertex;
+	
+	protected FileDialog saveDia =  new FileDialog(new JFrame(),"ENREGISTREMENT",FileDialog.SAVE);
 	
 	protected Room room = new Room(4,"Rectangle");
 	
