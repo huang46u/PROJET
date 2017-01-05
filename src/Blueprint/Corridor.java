@@ -206,8 +206,7 @@ public class Corridor implements Space{
 	        	 else if(l.startsWith("STAIRS")) nbStairs=scanner.nextInt();
 	        	 else if(l.startsWith("LAST")) idLastRoom=scanner.next();
 	        	 else if(l.startsWith("NEXT")) idNextRoom=scanner.next();
-	        	 else
-	        	 traces.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
+	        	 else traces.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
 	         }
 		} finally {
 			if (in != null)
