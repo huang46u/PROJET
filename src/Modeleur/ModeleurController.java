@@ -174,33 +174,33 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		if(mm.mode==1){
 			for (Wall w : mm.room.getWalls()){
 				if(w.isSelected()){
+					float orX1 = w.getV1().getX();
+					float orY1 = w.getV1().getY();
+					float orX2 = w.getV2().getX();
+					float orY2 = w.getV2().getY();
+					
 					float[] list=w.move(x, y);
+					w.getV1().move(list[0], list[1]);
+					w.getV2().move(list[2], list[3]);
 					mm.room.nextWall(w).getV1().move(list[2], list[3]);
 					mm.room.lastWall(w).getV2().move(list[0], list[1]);
+					
+					if(!mm.room.isConvexe()){
+						w.getV1().move(orX1, orY1);
+						w.getV2().move(orX2, orY2);
+						mm.room.nextWall(w).getV1().move(orX2, orY2);
+						mm.room.lastWall(w).getV2().move(orX1, orY1);
+					}
 					mm.graph.repaint();
 				}	
-				/*else if (w.getV1().isSelected()){
-					float[] point = Room.findIntersectionPoint(mm.room.lastWall(mm.room.lastWall(w)), mm.room.nextWall(w));
-					if(Room.isInTriangle(x-mm.r, y-mm.r, point[0], point[1], mm.room.lastWall(w).getV1(), w.getV2()))
-						w.getV1().move(x-mm.r, y-mm.r);
-					mm.graph.repaint();
-				}*/
 				else if (w.getV2().isSelected()){
-					if(mm.room.lastWall(w).getV1().equals(mm.room.nextWall(mm.room.nextWall(w)).getV2())){
-						System.out.println("v1=v2");
-					}
-					else{
-						float[] point = Room.findIntersectionPoint(mm.room.lastWall(w), mm.room.nextWall(mm.room.nextWall(w)));
-						if(point==null){
-							if(Room.betweenWalls(x, y, w, mm.room.lastWall(w), mm.room.nextWall(mm.room.nextWall(w)))){
-								w.getV2().move(x, y);
-								mm.room.nextWall(w).getV1().move(x, y);
-							}
-						} 
-						else if(Room.isInTriangle(x-mm.r, y-mm.r, point[0], point[1], w.getV1(), mm.room.nextWall(w).getV2())){
-							w.getV2().move(x-mm.r, y-mm.r);
-							mm.room.nextWall(w).getV1().move(x-mm.r, y-mm.r);
-						}
+					float orX = w.getV2().getX();
+					float orY = w.getV2().getY();
+					w.getV2().move(x-mm.r, y-mm.r);
+					mm.room.nextWall(w).getV1().move(x-mm.r, y-mm.r);
+					if(!mm.room.isConvexe()){
+						w.getV2().move(orX, orY);
+						mm.room.nextWall(w).getV1().move(orX, orY);
 					}
 					mm.graph.repaint();
 				}

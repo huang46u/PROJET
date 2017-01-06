@@ -110,8 +110,7 @@ public class Room implements Space {
 	}
 	
 	public static int ptPosition(float x, float y, Vertex vA, Vertex vB){
-		float r=(float)25/2;
-		float position = (vB.getX()-r-vA.getX()-r)*(y-r-vA.getY()-r)-(vB.getY()-r-vA.getY()-r)*(x-r-vA.getX()-r);
+		float position = (vB.getX()-vA.getX())*(y-vA.getY())-(vB.getY()-vA.getY())*(x-vA.getX());
 		if (position > 0) return 1;
 		else if (position < 0 ) return -1;
 		return 0;
@@ -178,6 +177,32 @@ public class Room implements Space {
 		boolean isInTriangle = ABP + APC + PBC == ABC;
 		
 		return isInTriangle;
+	}
+
+	public synchronized ArrayList<Vertex> getVertice(){
+		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+		for (Wall w: walls){
+			vertices.add(w.getV1());
+		}
+		for(Vertex v: vertices)
+			System.out.println(v.getX());
+		System.out.println("===================");
+		return vertices;
+	}
+	
+	public boolean isConvexe(){
+		if (walls.size()<4){
+			return true;}
+		int sign=0;
+		int n = walls.size();
+		for(int i=0; i<n; i++){
+			int pt =ptPosition(walls.get(i).getV2().getX(), walls.get(i).getV2().getY(), walls.get(i).getV1(), nextWall(walls.get(i)).getV2());
+			if (i == 0)
+				sign = pt;
+			else if (sign != pt)
+					return false;
+		}
+		return true;
 	}
 	
 	public void addDoor(String id){

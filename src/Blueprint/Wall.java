@@ -169,8 +169,6 @@ public class Wall {
 			v2y=v2.getY()+my;
 	
 		}
-		v1.move(v1x, v1y);
-		v2.move(v2x, v2y);
 		
 		float[] list= {v1x,v1y,v2x,v2y};
 		
