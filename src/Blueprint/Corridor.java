@@ -14,6 +14,8 @@ import java.util.Scanner;
 public class Corridor implements Space{
 	private String id;
 	private ArrayList<Wall> traces = new ArrayList<Wall>();
+	private ArrayList<Wall> leftWalls = new ArrayList<Wall>();
+	private ArrayList<Wall> rightWalls = new ArrayList<Wall>();
 	private int height;
 	private int width;
 	private int nbStairs;
@@ -25,13 +27,101 @@ public class Corridor implements Space{
 		this.id=id;
 		traces.add(new Wall(new Vertex(520,120),new Vertex(520,800)));
 		height=0;
+		width=120;
 		nbStairs=0;
 		idNextRoom=null;
 		idLastRoom=null;
+		updateWalls();
 	}
 	
 	public Corridor() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public static Vertex findIntersectionPoint(Wall w1, Wall w2){
+		float x,y;
+		float x1 = w1.getV1().getX();
+		float y1 = w1.getV1().getY();
+		float x2 = w1.getV2().getX();
+		float y2 = w1.getV2().getY();
+		float x3 = w2.getV1().getX();
+		float y3 = w2.getV1().getY();
+		float x4 = w2.getV2().getX();
+		float y4 = w2.getV2().getY();
+		if(x1==x2 && x3==x4){
+			return null;
+		}
+		else if(y1==y2 && y3==y4){
+			return null;
+		}
+		else if(x1==x2){
+			float a2 = (y3-y4)/(x3-x4);
+			float b2 = y3-x3*a2;
+			
+			x=x1;
+			y=a2*x+b2;
+		}
+		else if(x3==x4){
+			float a1 = (y1-y2)/(x1-x2);
+			float b1 = y1-x1*a1;
+			
+			x=x3;
+			y=a1*x+b1;
+		}
+		else if(y1==y2){
+			float a2 = (y3-y4)/(x3-x4);
+			float b2 = y3-x3*a2;
+			
+			y=y1;
+			x=(y-b2)/a2;
+		}
+		else if(y3==y4){
+			float a1 = (y1-y2)/(x1-x2);
+			float b1 = y1-x1*a1;
+			
+			y=y3;
+			x=(y-b1)/a1;
+		}
+		else{
+			float a1 = (y1-y2)/(x1-x2);
+			float a2 = (y3-y4)/(x3-x4);
+			if(Math.abs(a1-a2)<0.0001) return null;
+			
+			float b1 = y1-x1*a1;
+			float b2 = y3-x3*a2;
+			
+			x=(b2-b1)/(a1-a2);
+			y=a1*x+b1;
+		}
+		return new Vertex(x,y);
+	}
+	
+	public void updateWalls(){
+		leftWalls.clear();
+		rightWalls.clear();
+		
+		for (int i=0;i<traces.size();i++){
+			ArrayList<Wall> sidWalls = new ArrayList<Wall>();
+			sidWalls = traces.get(i).findWalls(width);
+			leftWalls.add(sidWalls.get(0));
+			rightWalls.add(sidWalls.get(1));
+		}
+		
+		for (int i=0; i< leftWalls.size()-1;i++){
+			Vertex v = findIntersectionPoint(leftWalls.get(i), leftWalls.get(i+1));
+			if (v!=null){
+				leftWalls.get(i).setV2(v);
+				leftWalls.get(i+1).setV1(v);
+			}
+		}
+		
+		for (int i=0; i< rightWalls.size()-1;i++){
+			Vertex v = findIntersectionPoint(rightWalls.get(i), rightWalls.get(i+1));
+			if (v!=null){
+				rightWalls.get(i).setV2(v);
+				rightWalls.get(i+1).setV1(v);
+			}
+		}
 	}
 
 	public void addVertex(){
@@ -145,6 +235,12 @@ public class Corridor implements Space{
 		for (Wall w : traces){
 			w.draw(g);
 		}
+		for (Wall w : leftWalls){
+			w.draw(g);
+		}
+		for (Wall w : rightWalls){
+			w.draw(g);
+		}
 	}
 	
 	public void write(String filepath) throws IOException{
@@ -208,6 +304,7 @@ public class Corridor implements Space{
 	        	 else if(l.startsWith("NEXT")) idNextRoom=scanner.next();
 	        	 else traces.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
 	         }
+	         updateWalls();
 		} finally {
 			if (in != null)
 				in.close();

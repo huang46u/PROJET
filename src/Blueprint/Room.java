@@ -190,6 +190,7 @@ public class Room implements Space {
 		return vertices;
 	}
 	
+	/** verifier si le polygon est convexe */
 	public boolean isConvexe(){
 		if (walls.size()<4){
 			return true;}

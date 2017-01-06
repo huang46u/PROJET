@@ -12,6 +12,7 @@ import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
@@ -38,6 +39,14 @@ public class Wall {
 	
 	public Vertex getV2(){
 		return v2;
+	}
+	
+	public void setV1(Vertex v1){
+		this.v1 = v1;
+	}
+	
+	public void setV2(Vertex v2){
+		this.v2 = v2;
 	}
 	
 	public Open getOpen(){
@@ -173,6 +182,35 @@ public class Wall {
 		float[] list= {v1x,v1y,v2x,v2y};
 		
 		return list;
+	}
+	
+	/** find the the wall on each side of the trace */
+	public ArrayList<Wall> findWalls(int width){
+		ArrayList<Wall> sidWalls = new ArrayList<Wall>();
+		if(v1.getX()==v2.getX()){
+			sidWalls.add(new Wall(new Vertex(v1.getX()+width/2, v1.getY()), 
+					new Vertex(v2.getX()+width/2, v2.getY())));
+			sidWalls.add(new Wall(new Vertex(v1.getX()-width/2, v1.getY()), 
+					new Vertex(v2.getX()-width/2, v2.getY())));
+		}
+		else if(v1.getY()==v2.getX()){
+			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()+width/2), 
+					new Vertex(v2.getX(), v2.getY()+width/2)));
+			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()-width/2), 
+					new Vertex(v2.getX(), v2.getY()-width/2)));
+		}
+		else{
+			float a = (v1.getY()-v2.getY())/(v1.getX()-v2.getX());
+			// a for the new Vertex
+			float aN = -1/a;
+			float dX = (float) Math.sqrt(((width/2)*(width/2))/(1+aN*aN));
+			float dY = aN*dX;
+			sidWalls.add(new Wall(new Vertex(v1.getX()+dX, v1.getY()+dY), 
+									new Vertex(v2.getX()+dX, v2.getY()+dY)));
+			sidWalls.add(new Wall(new Vertex(v1.getX()-dX, v1.getY()-dY), 
+					new Vertex(v2.getX()-dX, v2.getY()-dY)));
+		}
+		return sidWalls;
 	}
 	
 	public void addDoor(String id) {

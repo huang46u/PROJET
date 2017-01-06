@@ -17,6 +17,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
+import javax.swing.JFrame;
+
 import Blueprint.Corridor;
 import Blueprint.Room;
 import Blueprint.Wall;
@@ -226,11 +228,13 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 					if(mm.corridor.nextWall(w)==null){
 						
 					}else{
+						w.getV2().move(list[2], list[3]);
 						mm.corridor.nextWall(w).getV1().move(list[2], list[3]);
 					}
 					if(mm.corridor.lastWall(w)==null){
 						
 					}else{
+						w.getV1().move(list[0], list[1]);
 						mm.corridor.lastWall(w).getV2().move(list[0], list[1]);
 					}
 				}
@@ -240,6 +244,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				else if (w.getV2().isSelected()){
 					w.getV2().move(x-mm.r, y-mm.r);
 				}
+				mm.corridor.updateWalls();
 				mm.graph.repaint();
 			}
 		}
@@ -347,6 +352,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.repaint();
 		} else if (source == mm.bAddVertex && mm.mode == 2){
 			mm.corridor.addVertex();
+			mm.corridor.updateWalls();
 			mm.graph.repaint();
 			
 			mm.toolbar.removeAll();
@@ -356,6 +362,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.toolbar.repaint();
 		} else if (source == mm.bDelVertex && mm.mode==2){
 			mm.corridor.delVertex();
+			mm.corridor.updateWalls();
 			mm.graph.repaint();
 			
 			mm.toolbar.removeAll();
@@ -365,6 +372,11 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.toolbar.repaint();
 			mm.graph.validate();
 			mm.graph.repaint();
+		} else if (source == mm.bWidth && mm.mode==2){
+			JFrame ig=new JFrame();
+			ig.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			ig.pack();
+			ig.setVisible(true);
 		}
 	}
 
