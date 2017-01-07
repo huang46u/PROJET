@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Observable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -30,7 +31,7 @@ import Blueprint.Room;
  * class ModeleurModel 
  * celui-ci contient tous les variables et constantes prevues, ainsi que les methodes de fonctionnalite. 
  * */
-public class ModeleurModel {
+public class ModeleurModel extends Observable{
 	// Les constances de couleur  
 	public static final Color BLACK = new Color(0 ,0 ,0);
 	public static final Color DARKGREY1 = new Color(183, 183, 183); 

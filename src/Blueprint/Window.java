@@ -12,8 +12,8 @@ public class Window extends Open {
 
 	@Override
 	public void draw(Graphics g) {
-		getV1().draw(g);
-		getV2().draw(g);
+		getV1().drawOpen(g);
+		getV2().drawOpen(g);
 	}
 
 	@Override

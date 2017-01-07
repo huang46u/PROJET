@@ -35,6 +35,10 @@ public class Vertex {
 		return (float) Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
 	}
 	
+	public float ptDisVt(float x, float Y){
+		return (float) Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
+	}
+	
 	public float VtDisVt(Vertex v){
 		return (float) Math.sqrt((this.x-v.getX())*(this.x-v.getX())+(this.y-v.getY())*(this.y-v.getY()));
 	}
@@ -73,6 +77,17 @@ public class Vertex {
 			return;
 		}
 		g.setColor(ModeleurModel.BLACK);
+		g.fillOval((int)x, (int)y, 25, 25);
+		return;
+	}
+	
+	public void drawOpen (Graphics g){
+		if (selected) {
+			g.setColor(ModeleurModel.WHITE);
+			g.fillOval((int)x, (int)y, 25, 25);
+			return;
+		}
+		g.setColor(ModeleurModel.GREY);
 		g.fillOval((int)x, (int)y, 25, 25);
 		return;
 	}

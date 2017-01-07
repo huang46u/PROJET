@@ -61,6 +61,13 @@ public class Wall {
 		selected = !selected;	
 	}
 	
+	public int ptPosition(float x, float y){
+		float position = (v2.getX()-v1.getX())*(y-v1.getY())-(v2.getY()-v1.getY())*(x-v1.getX());
+		if (position > 0) return 1;
+		else if (position < 0 ) return -1;
+		return 0;
+	}
+	
 	public boolean between(int x, int y, float x1, float y1, float x2, float y2){
 		float maxX=x1;
 		float minX=x2;
@@ -102,48 +109,37 @@ public class Wall {
 		
 		Line2D l = new Line2D.Float(v1.getX()+r+supX*2, v1.getY()+r+supY*2, v2.getX()+r-supX*2, v2.getY()+r-supY*2);
 		
-		if (o == null){
 			
-			float maxX=v1.getX()+r+supX*2;
-			float minX=v2.getX()+r-supX*2;
-			float maxY=v1.getY()+r+supY*2;
-			float minY=v2.getY()+r-supY*2;
+		float maxX=v1.getX()+r+supX*2;
+		float minX=v2.getX()+r-supX*2;
+		float maxY=v1.getY()+r+supY*2;
+		float minY=v2.getY()+r-supY*2;
 			
-			if(maxX<minX){
-				float tmp=maxX;
-				maxX=minX;
-				minX=tmp;
-			}
-			
-			if(maxY<minY){
-				float tmp=maxY;
-				maxY=minY;
-				minY=tmp;
-			}
-			
-			boolean betweenX= x <= maxX && x >= minX ;
-			boolean betweenY= y <= maxY && y >= minY;
-			
-			if(minX==maxX) betweenX=true;
-			if(maxY==minY) betweenY=true;
-			
-			if (l.ptLineDist(x, y) <= r && betweenX && betweenY){
-				selected=true;			
-			}
-			else{
-				selected=false;
-			}
-		
-		} else{
-			if(l.ptLineDist(x,y) <= r && ( between(x,y,v1.getX()+r+supX*2,v1.getY()+r+supY*2,o.getV1().getX()+r-supX*2,o.getV1().getY()+r-supY*2)
-										|| between(x,y,o.getV1().getX()+r+supX*2,o.getV1().getY()+r+supY*2,o.getV2().getX()+r-supX*2,o.getV2().getY()+r-supY*2)
-										|| between(x,y,o.getV2().getX()+r+supX*2,o.getV2().getY()+r+supY*2,v2.getX()+r-supX*2,v2.getY()+r-supY*2)
-										)){
-				selected = true;
-			}else{
-				selected=false;
-			}
+		if(maxX<minX){
+			float tmp=maxX;
+			maxX=minX;
+			minX=tmp;
 		}
+			
+		if(maxY<minY){
+			float tmp=maxY;
+			maxY=minY;
+			minY=tmp;
+		}
+			
+		boolean betweenX= x <= maxX && x >= minX ;
+		boolean betweenY= y <= maxY && y >= minY;
+			
+		if(minX==maxX) betweenX=true;
+		if(maxY==minY) betweenY=true;
+			
+		if (l.ptLineDist(x, y) <= r && betweenX && betweenY){
+			selected=true;			
+		}
+		else{
+			selected=false;
+		}
+		
 	}
 	
 	public float[] move(float x, float y){
@@ -231,13 +227,10 @@ public class Wall {
 		float disX = v2.getX()-v1.getX();
 		float disY = v2.getY()-v1.getY();
 		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
-		float f1 = o.getR1() * disXY;
-		float f2 = o.getR2() * disXY;
-		float supX1 = f1 * (disX/disXY);
-		float supY1 = f1 * (disY/disXY);
-		float supX2 = f2 * (disX/disXY);
-		float supY2 = f2 * (disY/disXY);
-		o.move(v1.getX()+supX1, v1.getY()+supY1, v1.getX()+supX2, v1.getY()+supY2);
+		float f = o.getR() * disXY;
+		float supX = f * (disX/disXY);
+		float supY = f * (disY/disXY);
+		
 		
 	}
 	
@@ -277,14 +270,14 @@ public class Wall {
 		return l;
 	}
 	
-	public float ratioOpen(float x, float y){
+	public void updateRatio(){
 		float disX = v2.getX()-v1.getX();
 		float disY = v2.getY()-v1.getY();
 		float disXY = (float) Math.sqrt(disX*disX+disY*disY);
-		float disV1X = v1.getX()-x;
-		float disV1Y = v1.getY()-y;
+		float disV1X = v1.getX()-o.getMidVertex().getX();
+		float disV1Y = v1.getY()-o.getMidVertex().getY();
 		float disV1XY = (float) Math.sqrt(disV1X*disV1X+disV1Y*disV1Y);
-		return disV1XY/disXY;
+		o.setR(disV1XY/disXY);
 	}
 	
 	public void draw(Graphics g) {
@@ -302,9 +295,25 @@ public class Wall {
 		v2.draw(g);
 		
 		if(o!=null){
-			updateOpen();
+			//updateOpen();
 			o.draw(g);
 		}
+	
+	}
+	
+	public void drawTrace(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		if (selected){
+			g2.setColor(ModeleurModel.WHITE);
+		}
+		else{
+			g2.setColor(ModeleurModel.GREY);
+		}
+		g2.setStroke(new BasicStroke(10, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));
+		g2.draw(new Line2D.Float(v1.getX()+r, v1.getY()+r, v2.getX()+r, v2.getY()+r));
+		
+		v1.draw(g);
+		v2.draw(g);
 	
 	}
 	

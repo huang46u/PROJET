@@ -26,7 +26,7 @@ public class Corridor implements Space{
 	public Corridor(String id){
 		this.id=id;
 		traces.add(new Wall(new Vertex(520,120),new Vertex(520,800)));
-		height=0;
+		height=400;
 		width=120;
 		nbStairs=0;
 		idNextRoom=null;
@@ -233,7 +233,7 @@ public class Corridor implements Space{
 	@Override
 	public void draw(Graphics g) {
 		for (Wall w : traces){
-			w.draw(g);
+			w.drawTrace(g);
 		}
 		for (Wall w : leftWalls){
 			w.draw(g);

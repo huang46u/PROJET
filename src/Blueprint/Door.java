@@ -13,19 +13,18 @@ import java.awt.Graphics;
 import com.jogamp.opengl.GL2;
 
 public class Door extends Open {
-	private Vertex midv;
 	private boolean entrant;
 
 	public Door(String id, Vertex v1, Vertex v2) {
 		super(id, v1, v2);
-		midv=new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
 	}
+	
 
 	@Override
 	public void draw(Graphics g) {
-		getV1().draw(g);
-		getV2().draw(g);
-		midv.draw(g);
+		getV1().drawOpen(g);
+		getV2().drawOpen(g);
+		getMidVertex().draw(g);
 	}
 
 	@Override
@@ -132,7 +131,7 @@ public class Door extends Open {
 	public void move(float x1, float y1, float x2, float y2) {
 		getV1().move(x1, y1);
 		getV2().move(x2, y2);
-		midv.move((x1+x2)/2,(y1+y2)/2);
+		getMidVertex().move((x1+x2)/2,(y1+y2)/2);
 	}
 
 }

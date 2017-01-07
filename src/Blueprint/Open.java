@@ -15,16 +15,18 @@ import com.jogamp.opengl.GL2;
 /** class Open */
 public abstract class Open {
 	private String id, next=null;
-	private Vertex v1,v2;
-	private float r1,r2;
+	private float width;
+	private Vertex v1,v2,midv;
+	private float r;
 	private String nextOpen=null;
 	
 	public Open(String id, Vertex v1, Vertex v2){
 		this.id=id;
+		width=v1.VtDisVt(v2);
 		this.v1=v1;
 		this.v2=v2;
-		this.r1=(float)1/4;
-		this.r2=(float)3/4;
+		this.r=(float)1/2;
+		midv=new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
 	}
 
 	public String getID(){
@@ -39,20 +41,16 @@ public abstract class Open {
 		return v2;
 	}
 	
-	public float getR1(){
-		return r1;
+	public Vertex getMidVertex(){
+		return midv;
 	}
 	
-	public float getR2(){
-		return r2;
+	public float getR(){
+		return r;
 	}
 	
-	public void setR1(float r1){
-		this.r1=r1;
-	}
-	
-	public void serR2(float r2){
-		this.r2=r2;
+	public void setR(float r){
+		this.r=r;
 	}
 	
 	public abstract void move(float x1, float y1, float x2, float y2);
@@ -60,5 +58,6 @@ public abstract class Open {
 	public abstract void draw(Graphics g);
 
 	public abstract void draw(GL2 gl);
+
 
 }

@@ -9,7 +9,10 @@
 package Modeleur;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,8 +21,12 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import Blueprint.Corridor;
+import Blueprint.Door;
 import Blueprint.Room;
 import Blueprint.Wall;
 
@@ -80,10 +87,17 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				if(w.getOpen()!=null){
 					w.getOpen().getV1().select(x, y);
 					if(w.getOpen().getV1().isSelected()){
+						if(w.isSelected()) w.select();
 						selected=true;
 					}
 					w.getOpen().getV2().select(x, y);
 					if(w.getOpen().getV2().isSelected()){
+						if(w.isSelected()) w.select();
+						selected=true;
+					}
+					w.getOpen().getMidVertex().select(x, y);
+					if(w.getOpen().getMidVertex().isSelected()){
+						if(w.isSelected()) w.select();
 						selected=true;
 					}
 				}
@@ -208,17 +222,41 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				}
 				else if (w.getOpen() != null){
 					float[] l=w.moveOpen(x, y);
-					float r=w.ratioOpen(x, y);
 					if(w.getOpen().getV1().isSelected()){
-						w.getOpen().getV1().move(l[0]-mm.r, l[1]-mm.r);
-						w.getOpen().setR1(r);
+						float midX = (w.getOpen().getV2().getX()+l[0])/2;
+						float midY = (w.getOpen().getV2().getY()+l[1])/2;
+						if(mm.room.lastWall(w).ptPosition(l[0], l[1])<1 && mm.room.nextWall(w).ptPosition(l[0], l[1])<1){
+							w.getOpen().getV1().move(l[0], l[1]);
+							w.getOpen().getMidVertex().move(midX, midY);
+							w.updateRatio();
+						}
 					}
 					else if (w.getOpen().getV2().isSelected()){
-						w.getOpen().getV2().move(l[0]-mm.r, l[1]-mm.r);
-						w.getOpen().serR2(r);
+						float midX = (w.getOpen().getV1().getX()+l[0])/2;
+						float midY = (w.getOpen().getV1().getY()+l[1])/2;
+						if(mm.room.lastWall(w).ptPosition(l[0], l[1])<1 && mm.room.nextWall(w).ptPosition(l[0], l[1])<1){
+							w.getOpen().getV2().move(l[0], l[1]);
+							w.getOpen().getMidVertex().move(midX, midY);
+							w.updateRatio();
+						}
 					}
-					mm.graph.repaint();
+					else if(w.getOpen().getMidVertex().isSelected()){
+						float mx = l[0]-w.getOpen().getMidVertex().getX();
+						float my = l[1]-w.getOpen().getMidVertex().getY();
+						float vx1 = w.getOpen().getV1().getX();
+						float vy1 = w.getOpen().getV1().getY();
+						float vx2 = w.getOpen().getV2().getX();
+						float vy2 = w.getOpen().getV2().getY();
+						if(mm.room.lastWall(w).ptPosition(vx1+mx, vy1+my)<1 && mm.room.nextWall(w).ptPosition(vx2+mx, vy2+my)<1){
+							w.getOpen().getMidVertex().move(l[0], l[1]);
+							w.getOpen().getV1().move(vx1+mx, vy1+my);
+							w.getOpen().getV2().move(vx2+mx, vy2+my);
+							w.updateRatio();
+						}
+					}
 				}
+				mm.graph.repaint();
+				
 			}
 		} 
 		else if (mm.mode == 2){
@@ -263,6 +301,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
+		Font font = new Font("Arial", Font.BOLD, 20);
 		GridBagConstraints g = new GridBagConstraints();
 		
 		if (source == mm.bSave){
@@ -274,8 +313,8 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				try {
 					if(mm.mode==1){
 						mm.room.write(dir+file);
-						Room room2= new Room();
-						room2.read(dir+file);
+						//Room room2= new Room();
+						//room2.read(dir+file);
 					} else if(mm.mode==2){
 						mm.corridor.write(dir+file);
 						//Corridor corridor2=new Corridor();
@@ -305,6 +344,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			
 			mm.bVertex.addActionListener(this);
 			mm.bWidth.addActionListener(this);
+			mm.bHeight.addActionListener(this);
 			mm.bLastRoom.addActionListener(this);
 			mm.bNextRoom.addActionListener(this);
 			
@@ -374,9 +414,71 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.repaint();
 		} else if (source == mm.bWidth && mm.mode==2){
 			JFrame ig=new JFrame();
+			
+			JTextField input; //Composants textuels de l'interface
+			 
+			 //JPanel Nord
+			input= new JTextField(10);
+			input.setPreferredSize(new Dimension(200,30));
+			input.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	JTextField jt = (JTextField) e.getSource();
+		     		String w = jt.getText();
+		     		int n = Integer.parseInt(w);
+		     		mm.corridor.setWidth(n);
+		     		mm.corridor.updateWalls();
+		     		mm.graph.validate();
+					mm.graph.repaint();
+		            }
+		          });
+			input.setFont(font);
+			input.setText(""+mm.corridor.getWidth());
+			 
+			JPanel controlPanel= new JPanel(new GridLayout(1,2));
+			JLabel nb = new JLabel("LARGEUR ",JLabel.CENTER);
+			nb.setFont(font);
+			nb.setForeground(ModeleurModel.BLACK);
+			controlPanel.setBackground(ModeleurModel.DARKGREY4);
+			nb.setPreferredSize(new Dimension(110*2,70));
+			controlPanel.add(nb);
+			controlPanel.add(input);
+			
+			ig.getContentPane().add(controlPanel);
 			ig.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			ig.pack();
 			ig.setVisible(true);
+			
+		} else if (source == mm.bHeight && mm.mode==2){
+			JFrame fh=new JFrame();
+			
+			JTextField input;
+			 
+			input= new JTextField(10);
+			input.setPreferredSize(new Dimension(200,30));
+			input.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	JTextField jt = (JTextField) e.getSource();
+		     		String w = jt.getText();
+		     		int n = Integer.parseInt(w);
+		     		mm.corridor.setHeight(n);
+		            }
+		          });
+			input.setFont(font);
+			input.setText(""+mm.corridor.getHeight());
+			 
+			JPanel controlPanel= new JPanel(new GridLayout(1,2));
+			JLabel nb = new JLabel("HAUTEUR ",JLabel.CENTER);
+			nb.setFont(font);
+			nb.setForeground(ModeleurModel.BLACK);
+			controlPanel.setBackground(ModeleurModel.DARKGREY4);
+			nb.setPreferredSize(new Dimension(110*2,70));
+			controlPanel.add(nb);
+			controlPanel.add(input);
+			
+			fh.getContentPane().add(controlPanel);
+			fh.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			fh.pack();
+			fh.setVisible(true);
 		}
 	}
 
