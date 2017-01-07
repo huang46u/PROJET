@@ -24,7 +24,9 @@ import com.jogamp.opengl.GL2;
 
 public class Room implements Space {
 	private String id;
-	private ArrayList<Wall> walls = new ArrayList();
+	private ArrayList<Wall> walls = new ArrayList<Wall>();
+	private ArrayList<Wall> zone = new ArrayList<Wall>();
+	private boolean modeNavigation = false;
 	
 	public Room(){
 	}
@@ -58,6 +60,7 @@ public class Room implements Space {
 				break;
 		default: break;
 		}
+		
 	}
 	
 	public ArrayList<Wall> getWalls(){
@@ -223,9 +226,65 @@ public class Room implements Space {
 		
 	}
 	
+	public boolean isNavigationModeOn(){
+		return modeNavigation;
+	}
+	
+	public ArrayList<Wall> getNavigationZone(){
+		return zone;
+	}
+	
+	public void turnOnNavigation(){
+		zone.clear();
+		for(Wall w : walls)
+		zone.add(new Wall(new Vertex(w.getV1().getX(),w.getV1().getY()), 
+					new Vertex(w.getV2().getX(),w.getV2().getY())));
+		modeNavigation=true;
+	}
+	
+	public void turnOffNavigation(){
+		modeNavigation=false;
+	}
+	
+	public Wall nextWall(Wall w){
+		int n=walls.indexOf(w);
+		if(n==walls.size()-1){
+			return walls.get(0);
+		}
+		return walls.get(n+1);
+	}
+	
+	public Wall lastWall(Wall w){
+		int n=walls.indexOf(w);
+		if(n==0){
+			return walls.get(walls.size()-1);
+		}
+		return walls.get(n-1);
+	}
+	
+	public Wall nextTrace(Wall w){
+		int n=zone.indexOf(w);
+		if(n==zone.size()-1){
+			return zone.get(0);
+		}
+		return zone.get(n+1);
+	}
+	
 	public void draw(Graphics g){
-		for (Wall w : walls){
-			w.draw(g);
+		if (!modeNavigation){
+			for (Wall w : zone){
+				w.drawTrace(g);
+			}
+			for (Wall w : walls){
+				w.draw(g);
+			}
+		} else{
+			for (Wall w : walls){
+				w.draw(g);
+			}
+			for (Wall w : zone){
+				w.drawTrace(g);
+			}
 		}
 	}
 
@@ -260,21 +319,7 @@ public class Room implements Space {
 		gl.glEnd();
 	}
 	
-	public Wall nextWall(Wall w){
-		int n=walls.indexOf(w);
-		if(n==walls.size()-1){
-			return walls.get(0);
-		}
-		return walls.get(n+1);
-	}
-	
-	public Wall lastWall(Wall w){
-		int n=walls.indexOf(w);
-		if(n==0){
-			return walls.get(walls.size()-1);
-		}
-		return walls.get(n-1);
-	}
+
 	
 	public void write(String filepath) throws IOException{
 		PrintWriter in = null;
@@ -306,6 +351,20 @@ public class Room implements Space {
 	        	 
 	        	 in.print("\n");
 	         }
+	         //in.println("ZONE");
+	         for(Wall w : zone){
+	        	 in.print("TRACE");
+	        	 in.print(" ");
+	        	 in.print(w.getV1().getX());
+	        	 in.print(" ");
+	        	 in.print(w.getV1().getY());
+	        	 in.print(" ");
+	        	 in.print(w.getV2().getX());
+	        	 in.print(" ");
+	        	 in.print(w.getV2().getY());
+	        	
+	        	 in.print("\n");
+	         }
 		} finally {
 			if (in != null)
 				in.close();
@@ -320,15 +379,22 @@ public class Room implements Space {
 	         id = in.readLine();
 	         String line;
 	         while ((line = in.readLine()) != null){
-	        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
-	        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
-	        	 if (scanner.hasNext()){
-	        		 String id=scanner.next();
-	        		 if(id.startsWith("Door")){
-	        			 walls.get(walls.size()-1).addDoor(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
-	        		 } else if (id.startsWith("Window")){
-	        			 walls.get(walls.size()-1).addWindow(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
-	        		 }
+	        	 if(!line.startsWith("TRACE")){
+		        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
+		        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
+		        	 if (scanner.hasNext()){
+		        		 String id=scanner.next();
+		        		 if(id.startsWith("Door")){
+		        			 walls.get(walls.size()-1).addDoor(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+		        		 } else if (id.startsWith("Window")){
+		        			 walls.get(walls.size()-1).addWindow(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+		        		 }
+		        	 }
+	        	 }
+	        	 else{
+	        		 Scanner scanner = new Scanner(line).useDelimiter(" ");
+	        		 String trace=scanner.next();
+		        	 zone.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
 	        	 }
 	         }
 		} finally {

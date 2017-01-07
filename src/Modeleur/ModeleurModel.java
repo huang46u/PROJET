@@ -56,7 +56,7 @@ public class ModeleurModel extends Observable{
 	protected JPanel bg, toolbar, optsMode, optsRoom, optsCorridor, optsWall, optsTraces, optsVertex, save;
 	
 	protected JButton 	bRoom, bCorridor, bRectangle, bHexagon, bOctogon, bVertex, bAddVertex, bDoor, bWindow, 
-						bDelVertex, bWidth, bNextRoom, bLastRoom, bHeight, bNbStairs;
+						bDelVertex, bWidth, bNextRoom, bLastRoom, bHeight, bNbStairs, bNavigation;
 	
 	protected FileDialog saveDia =  new FileDialog(new JFrame(),"ENREGISTREMENT",FileDialog.SAVE);
 	
@@ -124,6 +124,13 @@ public class ModeleurModel extends Observable{
 		bOctogon.setPreferredSize(new Dimension(110*2,70));
 		bOctogon.setFocusPainted(false);
 		
+		bNavigation= new JButton("ZONE NAV.");
+		bNavigation.setFont(font);
+		bNavigation.setForeground(ModeleurModel.BLACK);
+		bNavigation.setBackground(ModeleurModel.DARKGREY4);
+		bNavigation.setPreferredSize(new Dimension(110*2,70));
+		bNavigation.setFocusPainted(false);
+		
 		g.gridx = 0;
 		g.gridy = 1;
 		g.insets= new Insets(10,0,10,0);
@@ -132,6 +139,8 @@ public class ModeleurModel extends Observable{
 		optsRoom.add(bHexagon,g);
 		g.gridy = 3;
 		optsRoom.add(bOctogon,g);
+		g.gridy = 4;
+		optsRoom.add(bNavigation,g);
 		
 		// Options pour les murs
 		optsWall = new JPanel(new GridBagLayout());

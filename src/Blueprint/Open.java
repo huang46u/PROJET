@@ -16,7 +16,7 @@ import com.jogamp.opengl.GL2;
 public abstract class Open {
 	private String id, next=null;
 	private float width;
-	private Vertex v1,v2,midv;
+	protected Vertex v1,v2,midv;
 	private float r;
 	private String nextOpen=null;
 	
@@ -51,6 +51,14 @@ public abstract class Open {
 	
 	public void setR(float r){
 		this.r=r;
+	}
+	
+	public float getWidth(){
+		return width;
+	}
+	
+	public void setWidth(float width){
+		this.width=width;
 	}
 	
 	public abstract void move(float x1, float y1, float x2, float y2);

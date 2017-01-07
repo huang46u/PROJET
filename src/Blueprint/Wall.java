@@ -230,8 +230,34 @@ public class Wall {
 		float f = o.getR() * disXY;
 		float supX = f * (disX/disXY);
 		float supY = f * (disY/disXY);
-		
-		
+		if(v1.getX()==v2.getX()){
+			o.getMidVertex().move(v1.getX()+supX, v1.getY()+supY);
+			if(disY>0){
+				o.getV1().move(o.getMidVertex().getX(), o.getMidVertex().getY()-o.getWidth()/2);
+				o.getV2().move(o.getMidVertex().getX(), o.getMidVertex().getY()+o.getWidth()/2);
+			}
+			else{
+				o.getV1().move(o.getMidVertex().getX(), o.getMidVertex().getY()+o.getWidth()/2);
+				o.getV2().move(o.getMidVertex().getX(), o.getMidVertex().getY()-o.getWidth()/2);
+			}
+		}else{
+			float a = (v1.getY()-v2.getY())/(v1.getX()-v2.getX());
+			float dx = (float) Math.sqrt(((o.getWidth()/2)*(o.getWidth()/2))/((1+a*a)));
+			float dy = a*dx;
+			o.getMidVertex().move(v1.getX()+supX, v1.getY()+supY);
+			float x1 = o.getMidVertex().getX()-dx;
+			float y1 = o.getMidVertex().getY()-dy;
+			float x2 = o.getMidVertex().getX()+dx;
+			float y2 = o.getMidVertex().getY()+dy;
+			if(v2.ptDisVt(x1, y1) < v1.ptDisVt(x1, y1)){
+				o.getV1().move(x2, y2);
+				o.getV2().move(x1, y1);
+			} else {
+				o.getV1().move(x1, y1);
+				o.getV2().move(x2, y2);
+			}
+			
+		}
 	}
 	
 	public void addWindow(String id) {
@@ -295,7 +321,7 @@ public class Wall {
 		v2.draw(g);
 		
 		if(o!=null){
-			//updateOpen();
+			updateOpen();
 			o.draw(g);
 		}
 	

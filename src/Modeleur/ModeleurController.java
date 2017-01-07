@@ -52,7 +52,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		boolean selected=false;
 		GridBagConstraints g = new GridBagConstraints();
 		
-		if(mm.mode==1){
+		if(mm.mode==1 && !mm.room.isNavigationModeOn()){
 			for (Wall w : mm.room.getWalls()){
 				w.getV1().select(x, y);
 				if(w.getV1().isSelected()){
@@ -112,7 +112,14 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				}
 			}
 				
+		}
+		else if (mm.mode == 1 && mm.room.isNavigationModeOn()){
+			for (Wall w : mm.room.getNavigationZone()){
+				w.getV1().select(x, y);
+				w.getV2().select(x, y);
+				mm.graph.repaint();
 			}
+		}
 		else if (mm.mode==2){
 			for (Wall w : mm.corridor.getTraces()){
 				w.getV1().select(x, y);
@@ -187,7 +194,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		float x = e.getX();
 		float y = e.getY();
 		
-		if(mm.mode==1){
+		if(mm.mode==1  && !mm.room.isNavigationModeOn()){
 			for (Wall w : mm.room.getWalls()){
 				if(w.isSelected()){
 					float orX1 = w.getV1().getX();
@@ -214,7 +221,10 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 					float orY = w.getV2().getY();
 					w.getV2().move(x-mm.r, y-mm.r);
 					mm.room.nextWall(w).getV1().move(x-mm.r, y-mm.r);
-					if(!mm.room.isConvexe()){
+					if(!mm.room.isConvexe() || (w.getOpen()!=null && w.getOpen().getWidth()>w.getV1().VtDisVt(w.getV2()))){
+						w.getV2().move(orX, orY);
+						mm.room.nextWall(w).getV1().move(orX, orY);
+					}else if(mm.room.nextWall(w).getOpen()!=null && mm.room.nextWall(w).getOpen().getWidth() > mm.room.nextWall(w).getV1().VtDisVt(mm.room.nextWall(w).getV2())){
 						w.getV2().move(orX, orY);
 						mm.room.nextWall(w).getV1().move(orX, orY);
 					}
@@ -229,6 +239,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 							w.getOpen().getV1().move(l[0], l[1]);
 							w.getOpen().getMidVertex().move(midX, midY);
 							w.updateRatio();
+							w.getOpen().setWidth(w.getOpen().getV1().VtDisVt(w.getOpen().getV2()));
 						}
 					}
 					else if (w.getOpen().getV2().isSelected()){
@@ -238,6 +249,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 							w.getOpen().getV2().move(l[0], l[1]);
 							w.getOpen().getMidVertex().move(midX, midY);
 							w.updateRatio();
+							w.getOpen().setWidth(w.getOpen().getV1().VtDisVt(w.getOpen().getV2()));
 						}
 					}
 					else if(w.getOpen().getMidVertex().isSelected()){
@@ -247,7 +259,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 						float vy1 = w.getOpen().getV1().getY();
 						float vx2 = w.getOpen().getV2().getX();
 						float vy2 = w.getOpen().getV2().getY();
-						if(mm.room.lastWall(w).ptPosition(vx1+mx, vy1+my)<1 && mm.room.nextWall(w).ptPosition(vx2+mx, vy2+my)<1){
+						if(mm.room.lastWall(w).ptPosition(vx1+mx, vy1+my)<0 && mm.room.nextWall(w).ptPosition(vx2+mx, vy2+my)<0){
 							w.getOpen().getMidVertex().move(l[0], l[1]);
 							w.getOpen().getV1().move(vx1+mx, vy1+my);
 							w.getOpen().getV2().move(vx2+mx, vy2+my);
@@ -259,6 +271,17 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				
 			}
 		} 
+		else if (mm.mode == 1 && mm.room.isNavigationModeOn()){
+			for (Wall w : mm.room.getNavigationZone()){
+				if (w.getV2().isSelected()){
+					float orX = w.getV2().getX();
+					float orY = w.getV2().getY();
+					w.getV2().move(x-mm.r, y-mm.r);
+					mm.room.nextTrace(w).getV1().move(x-mm.r, y-mm.r);
+					mm.graph.repaint();
+				}
+			}
+		}
 		else if (mm.mode == 2){
 			for (Wall w : mm.corridor.getTraces()){
 				if(w.isSelected()){
@@ -313,8 +336,12 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				try {
 					if(mm.mode==1){
 						mm.room.write(dir+file);
-						//Room room2= new Room();
-						//room2.read(dir+file);
+						Room room2= new Room();
+						room2.read(dir+file);
+						for(Wall w: room2.getWalls())
+							System.out.println(w.getV1().getX());
+						for(Wall w: room2.getNavigationZone())
+							System.out.println(w.getV1().getY());
 					} else if(mm.mode==2){
 						mm.corridor.write(dir+file);
 						//Corridor corridor2=new Corridor();
@@ -331,6 +358,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.bRectangle.addActionListener(this);
 			mm.bHexagon.addActionListener(this);
 			mm.bOctogon.addActionListener(this);
+			mm.bNavigation.addActionListener(this);
 			
 			mm.toolbar.add(mm.optsRoom, BorderLayout.CENTER);
 			mm.toolbar.add(mm.save, BorderLayout.SOUTH);
@@ -362,6 +390,12 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.repaint();
 		} else if (source == mm.bOctogon && mm.mode==1){
 			mm.room = new Room(8,"Octogone");
+			mm.graph.repaint();
+		} else if (source == mm.bNavigation && mm.mode==1){
+			if (mm.room.isNavigationModeOn())
+				mm.room.turnOffNavigation();
+			else
+				mm.room.turnOnNavigation();
 			mm.graph.repaint();
 		} else if (source == mm.bVertex && mm.mode==1){
 			mm.room.addVertex();
