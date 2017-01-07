@@ -13,6 +13,8 @@ import java.awt.MenuItem;
 
 import javax.swing.JFrame;
 
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
 public class NavigateurModel {
 
@@ -20,6 +22,8 @@ public class NavigateurModel {
 	final JFrame frame = new JFrame();	 
 	protected MenuItem closeItem = new MenuItem("Exit"); 
 	protected FileDialog openDia=  new FileDialog(frame,"Ouvrir",FileDialog.LOAD);
+	
+	protected String filename;
 	protected MenuItem menutexture = new MenuItem("Texture");
 	protected FileDialog textureDia = new FileDialog(frame,"Texture",FileDialog.LOAD);
 	protected Texture texture;
@@ -27,6 +31,10 @@ public class NavigateurModel {
 	protected String textureFileType=".png";
 	protected float textureTop, textureBottom, textureLeft, textureRight;
 
+	protected GLCanvas canvas = new GLCanvas();
+	private static final int FPS = 60;
+	protected final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
+	
 	private static float posX = 2;
 	private float posZ = 2;
 	private float headingY = 0; // heading of player; about y-axis

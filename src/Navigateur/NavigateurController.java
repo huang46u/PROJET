@@ -85,27 +85,8 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 			String dirPath = model.openDia.getDirectory();  
 			String fileName = model.openDia.getFile(); 
 			File file = new File(dirPath,fileName);  	
-			Room r= new Room(4, "Rectangle");	
-			try {
-				r.read(fileName);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		model.frame.repaint();
-		}
-		
-		if(source == model.menutexture){
-			model.textureDia.setVisible(true);
-			String dirpath=model.textureDia.getDirectory();
-			String TextureName = model.textureDia.getFile();
-			model.textureFileName=(dirpath+"/"+TextureName);
-			System.out.println(model.textureFileName);
-			model.textureFileType=TextureName.substring(TextureName.lastIndexOf('.')+1);
-			model.frame.repaint();
-		}
-		if ( source == model.closeItem){
-			System.exit(0);
+			model.filename = fileName;
+			
 		}
 		
 	}

@@ -49,6 +49,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.TextureIO;
 
+import Blueprint.Corridor;
 import Blueprint.Room;
 
 @SuppressWarnings("serial")
@@ -103,38 +104,6 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 		// Diffuse light location xyz (in front of the screen).
 		float[] lightDiffusePosion = {0.0f, 0.0f, -2.0f, 1.0f};
 
-		gl.glFogfv(GL_FOG_COLOR, fogColor, 0); // set fog color
-	    gl.glFogf(GL_FOG_DENSITY, 0.35f);      // how dense will the fog be
-	    gl.glHint(GL_FOG_HINT, GL_DONT_CARE);  // fog hint value
-	    gl.glFogf(GL_FOG_START, 20.0f); // fog start depth
-	    gl.glFogf(GL_FOG_END, 20.0f);   // fog end depth
-	    gl.glEnable(GL_FOG);           // enables GL_FOG
-
-		
-		 try {
-	         // Create a OpenGL Texture object from (URL, mipmap, file suffix)
-	         // Use URL so that can read from JAR and disk file.
-			 model.texture = TextureIO.newTexture(
-	               getClass().getClassLoader().getResource(model.textureFileName), // relative to project root 
-	               false, model.textureFileType);
-
-	         // Use linear filter for texture if image is larger than the original texture
-	         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	         // Use linear filter for texture if image is smaller than the original texture
-	         gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	         // Texture image flips vertically. Shall use TextureCoords class to retrieve
-	         // the top, bottom, left and right coordinates, instead of using 0.0f and 1.0f.
-	         TextureCoords textureCoords = model.texture.getImageTexCoords();
-	         model.textureTop = textureCoords.top();
-	         model.textureBottom = textureCoords.bottom();
-	         model.textureLeft = textureCoords.left();
-	         model.textureRight = textureCoords.right();
-	      } catch (GLException e) {
-	         e.printStackTrace();
-	      } catch (IOException e) {
-	         e.printStackTrace();
-	      }
 		 gl.glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbientValue, 0);
 			gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuseValue, 0);
 			gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosion, 0);
@@ -159,7 +128,7 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 
 		// Player is at (posX, 0, posZ), Translate the scene to (-posX, 0, -posZ)
 		gl.glTranslatef(-model.getPosX(), -model.getWalkBias() - 0.5f, -model.getPosZ());
-		gl.glFogi(GL_FOG_MODE, fogModes[currFogFilter]); // Fog Mode
+		//gl.glFogi(GL_FOG_MODE, fogModes[currFogFilter]); // Fog Mode
 		// Lighting
 		if (model.getIsLigntOn()) {
 			gl.glEnable(GL_LIGHTING);
@@ -167,25 +136,24 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 			gl.glDisable(GL_LIGHTING);
 		}
 		  // Enables this texture's target in the current GL context's state.
-	      model.texture.enable(gl);
+	      //model.texture.enable(gl);
 	        // same as gl.glEnable(texture.getTarget());
 	      // gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 	      // Binds this texture to the current GL context.
-	      model.texture.bind(gl);  // same as gl.glBindTexture(texture.getTarget(), texture.getTextureObject());
+	      //model.texture.bind(gl);  // same as gl.glBindTexture(texture.getTarget(), texture.getTextureObject());
 		// ----- creer des objets -----
 
 		// first room
 		//gl.glColor3f(0.1f, 0.5f, 0.5f);
-		Room r=new Room();
-		try {
-			r.read("test.txt");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Corridor r=new Corridor();
+		if(model.filename!=null){
+			try {
+				r.read(model.filename);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			r.draw(gl);
 		}
-		//r.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);
-		r.draw(gl);
-	    // r.draw(gl);
 	     
 	}
 	/**

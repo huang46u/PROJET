@@ -8,7 +8,12 @@
 
 package Blueprint;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -20,7 +25,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import com.jogamp.opengl.GL2;
+
+import Modeleur.ModeleurModel;
 
 public class Room implements Space {
 	private String id;
@@ -213,6 +225,39 @@ public class Room implements Space {
 		for(Wall w: walls){
 			if(w.isSelected()){
 				w.addDoor(id);
+				
+				JFrame ig=new JFrame();
+				
+				JTextField input; //Composants textuels de l'interface
+				 
+				Font font = new Font("Arial", Font.BOLD, 20);
+				 //JPanel Nord
+				input= new JTextField(10);
+				input.setPreferredSize(new Dimension(200,30));
+				input.addActionListener(new ActionListener() {
+			         public void actionPerformed(ActionEvent e) {
+			        	JTextField jt = (JTextField) e.getSource();
+			     		String s = jt.getText();
+			     		int n = Integer.parseInt(s);
+			     		w.setDoorHeight(n);
+			            }
+			          });
+				input.setFont(font);
+				input.setText(""+w.getDoorHeight());
+				 
+				JPanel controlPanel= new JPanel(new GridLayout(1,2));
+				JLabel nb = new JLabel("HAUTEUR ",JLabel.CENTER);
+				nb.setFont(font);
+				nb.setForeground(ModeleurModel.BLACK);
+				controlPanel.setBackground(ModeleurModel.DARKGREY4);
+				nb.setPreferredSize(new Dimension(110*2,70));
+				controlPanel.add(nb);
+				controlPanel.add(input);
+				
+				ig.getContentPane().add(controlPanel);
+				ig.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				ig.pack();
+				ig.setVisible(true);
 			}
 		}
 	}
@@ -294,9 +339,16 @@ public class Room implements Space {
 		}
 		
 		gl.glBegin(GL2.GL_POLYGON);
-		gl.glColor3f(0.8f, 0.3f, 0.8f);
+		gl.glColor3f(0.2f, 0.8f, 0.2f);
 			for (Wall w: walls){
 				gl.glVertex3f(w.getV1().getX()/100, 0.0f, w.getV1().getY()/100);
+			}
+		gl.glEnd();
+		
+		gl.glBegin(GL2.GL_POLYGON);
+		gl.glColor3f(0.2f, 0.8f, 0.2f);
+			for (Wall w: walls){
+				gl.glVertex3f(w.getV1().getX()/100, 1.0f, w.getV1().getY()/100);
 			}
 		gl.glEnd();
 	}
@@ -401,6 +453,14 @@ public class Room implements Space {
 			if (in != null)
 				in.close();
 		}	
+	}
+
+	class DoorGraph extends JPanel {
+		public void paintComponent (Graphics g) {
+			super.paintComponent(g);
+			this.setBackground(ModeleurModel.DARKGREY3);
+			
+		}
 	}
 
 	

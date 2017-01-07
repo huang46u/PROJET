@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.jogamp.opengl.GL2;
+
 public class Corridor implements Space{
 	private String id;
 	private ArrayList<Wall> traces = new ArrayList<Wall>();
@@ -309,6 +311,17 @@ public class Corridor implements Space{
 			if (in != null)
 				in.close();
 		}	
+	}
+
+	public void draw(GL2 gl) {
+		for (Wall w : leftWalls){
+			w.draw(gl);
+		}
+		
+		for (Wall w : rightWalls){
+			w.draw(gl);
+		}
+		
 	}
 
 }

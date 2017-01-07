@@ -21,6 +21,7 @@ import Modeleur.ModeleurModel;
 public class Wall {
 	private Vertex v1;
 	private Vertex v2;
+	private int height;
 	private boolean selected=false;
 	private Open o=null;
 	
@@ -29,6 +30,7 @@ public class Wall {
 
 	public Wall(Vertex v1, Vertex v2) {
 		super();
+		height=400;
 		this.v1 = v1;
 		this.v2 = v2;
 	}
@@ -47,6 +49,10 @@ public class Wall {
 	
 	public void setV2(Vertex v2){
 		this.v2 = v2;
+	}
+	
+	public void setHeight(int height){
+		this.height=height;
 	}
 	
 	public Open getOpen(){
@@ -189,7 +195,7 @@ public class Wall {
 			sidWalls.add(new Wall(new Vertex(v1.getX()-width/2, v1.getY()), 
 					new Vertex(v2.getX()-width/2, v2.getY())));
 		}
-		else if(v1.getY()==v2.getX()){
+		else if(v1.getY()==v2.getY()){
 			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()+width/2), 
 					new Vertex(v2.getX(), v2.getY()+width/2)));
 			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()-width/2), 
@@ -347,88 +353,17 @@ public class Wall {
 	{
 		if(o==null){
 			float weight = 10f;
-			float b = 0;
-			float x =0;
-			float z =0;
-			float X1=0,X2=0,X3=0,X4=0,Z1=0,Z2=0,Z3=0,Z4=0;
-			if (v1.getY()-v2.getY()!=0) {
-				b = -((v1.getX()-v2.getX())/(v1.getY()-v2.getY()));
-				x = (float) ((weight/2)*Math.sqrt(1/(1-b*b)));
-				z = (float) ((weight/2)*Math.sqrt(b*b/(1-b*b)));
-			
-				if(b> 0){
-					X1= v1.getX()+x;
-					X2= v1.getX()-x;
-					X3= v2.getX()+x;
-					X4= v2.getX()-x;
-
-					Z1 = v1.getY()+z;
-					Z2 = v1.getY()-z;
-					Z3 = v2.getY()+z;
-					Z4 = v2.getY()-z;
-				} else if(b < 0){
-					X1= v1.getX()-x;
-					X2= v1.getX()+x;
-					X3= v2.getX()-x;
-					X4= v2.getX()+x;
-
-					Z1 = v1.getY()+z;
-					Z2 = v1.getY()-z;
-					Z3 = v2.getY()+z;
-					Z4 = v2.getY()-z;
-				} else {
-					X1=v1.getX()+weight/2;
-					X2=v1.getX()-weight/2;
-					X3=v1.getX()+weight/2;
-					X4=v1.getX()-weight/2;
-					
-					Z1 = v1.getY();
-					Z2 = v1.getY();
-					Z3 = v2.getY();
-					Z4 = v2.getY();
-				}
-			} else {
-				X1=v1.getX();
-				X2=v1.getX();
-				X3=v2.getX();
-				X4=v2.getX();
-				Z1 = v1.getY()+weight/2;
-				Z2 = v1.getY()-weight/2;
-				Z3 = v2.getY()+weight/2;
-				Z4 = v2.getY()-weight/2;
-			}
-			
+			float X1 = v1.getX();
+			float Z1 = v1.getY();
+			float X2 = v2.getX();
+			float Z2 = v2.getY();
 			gl.glBegin(GL2.GL_QUADS);
+			gl.glColor3f(0.4f, 0.3f, 0.8f);
 			
 				gl.glVertex3f(X1/100, 1.0f, Z1/100);
 				gl.glVertex3f(X2/100, 1.0f, Z2/100);
 				gl.glVertex3f(X2/100, 0.0f, Z2/100);
 				gl.glVertex3f(X1/100, 0.0f, Z1/100);
-				
-				gl.glVertex3f(X1/100, 1.0f, Z1/100);
-				gl.glVertex3f(X3/100, 1.0f, Z3/100);
-				gl.glVertex3f(X3/100, 0.0f, Z3/100);
-				gl.glVertex3f(X1/100, 0.0f, Z1/100);
-			
-				gl.glVertex3f(X2/100, 1.0f, Z2/100);
-				gl.glVertex3f(X4/100, 1.0f, Z4/100);
-				gl.glVertex3f(X4/100, 0.0f, Z4/100);
-				gl.glVertex3f(X2/100, 0.0f, Z2/100);
-			
-				gl.glVertex3f(X3/100, 1.0f, Z3/100);
-				gl.glVertex3f(X4/100, 1.0f, Z4/100);
-				gl.glVertex3f(X4/100, 0.0f, Z4/100);
-				gl.glVertex3f(X3/100, 0.0f, Z3/100);
-	
-				gl.glVertex3f(X1/100, 0.0f, Z1/100);
-				gl.glVertex3f(X2/100, 0.0f, Z2/100);
-				gl.glVertex3f(X4/100, 0.0f, Z4/100);
-				gl.glVertex3f(X3/100, 0.0f, Z3/100);
-				
-				gl.glVertex3f(X1/100, 1.0f, Z1/100);
-				gl.glVertex3f(X2/100, 1.0f, Z2/100);
-				gl.glVertex3f(X4/100, 1.0f, Z4/100);
-				gl.glVertex3f(X3/100, 1.0f, Z3/100);
 			
 			gl.glEnd();
 		} else {
@@ -440,58 +375,11 @@ public class Wall {
 	
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR){
 		float weight = 1f;
-		float b = 0;
-		float x =0;
-		float z =0;
-		float X1=0,X2=0,X3=0,X4=0,Z1=0,Z2=0,Z3=0,Z4=0;
-		if(v1.getY()-v2.getY()!=0){
-			b = -((v1.getX()-v2.getX())/(v1.getY()-v2.getY()));
-			x = (float) ((weight/2)*Math.sqrt(1/(1+b*b))); 
-			z = (float) (Math.sqrt((weight*weight))/2*(1-(1/(1+b*b))));
-			
-			
-			if ( b > 0){
-				X1= v1.getX()+x;
-				X2= v1.getX()-x;
-				X3= v2.getX()+x;
-				X4= v2.getX()-x;
-	
-				Z1 = v1.getY()+z;
-				Z2 = v1.getY()-z;
-				Z3 = v2.getY()+z;
-				Z4 = v2.getY()-z;
-			} else if( b < 0){
-				X1= v1.getX()-x;
-				X2= v1.getX()+x;
-				X3= v2.getX()-x;
-				X4= v2.getX()+x;
-	
-				Z1 = v1.getY()+z;
-				Z2 = v1.getY()-z;
-				Z3 = v2.getY()+z;
-				Z4 = v2.getY()-z;
-			} else {
-				X1=v1.getX()+weight/2;
-				X2=v1.getX()-weight/2;
-				X3=v1.getX()+weight/2;
-				X4=v1.getX()-weight/2;
-				
-				Z1 = v1.getY();
-				Z2 = v1.getY();
-				Z3 = v2.getY();
-				Z4 = v2.getY();
-			}
-		} else {
-			X1=v1.getX();
-			X2=v1.getX();
-			X3=v2.getX();
-			X4=v2.getX();
-			
-			Z1 = v1.getY()+weight/2;
-			Z2 = v1.getY()-weight/2;
-			Z3 = v2.getY()+weight/2;
-			Z4 = v2.getY()-weight/2;
-		}
+		float X1 = v1.getX();
+		float Z1 = v1.getY();
+		float X2 = v2.getX();
+		float Z2 = v2.getY();
+		
 		gl.glBegin(GL2.GL_QUADS);
 		
 		gl.glTexCoord2f(tL,tB);
@@ -503,53 +391,15 @@ public class Wall {
 		gl.glTexCoord2f(tL, tT);
 		gl.glVertex3f(X1/100, 0.0f, Z1/100);
 		
-		gl.glTexCoord2f(tR,tB);
-		gl.glVertex3f(X1/100, 2.0f, Z1/100);
-		gl.glTexCoord2f(tR, tT);
-		gl.glVertex3f(X3/100, 2.0f, Z3/100);
-		gl.glTexCoord2f(tL, tT);
-		gl.glVertex3f(X3/100, 0.0f, Z3/100);
-		gl.glTexCoord2f(tL, tB);
-		gl.glVertex3f(X1/100, 0.0f, Z1/100);
-	
-		gl.glTexCoord2f(tL,tT);
-		gl.glVertex3f(X2/100, 2.0f, Z2/100);
-		gl.glTexCoord2f(tL, tB);
-		gl.glVertex3f(X4/100, 2.0f, Z4/100);
-		gl.glTexCoord2f(tR, tB);
-		gl.glVertex3f(X4/100, 0.0f, Z4/100);
-		gl.glTexCoord2f(tR, tT);
-		gl.glVertex3f(X2/100, 0.0f, Z2/100);
-	
-		gl.glTexCoord2f(tR,tT);
-		gl.glVertex3f(X3/100, 2.0f, Z3/100);
-		gl.glTexCoord2f(tL, tT);
-		gl.glVertex3f(X4/100, 2.0f, Z4/100);
-		gl.glTexCoord2f(tL, tB);
-		gl.glVertex3f(X4/100, 0.0f, Z4/100);
-		gl.glTexCoord2f(tR, tB);
-		gl.glVertex3f(X3/100, 0.0f, Z3/100);
-	
-		gl.glTexCoord2f(tR,tT);
-		gl.glVertex3f(X1/100, 0.0f, Z1/100);
-		gl.glTexCoord2f(tL, tT);
-		gl.glVertex3f(X2/100, 0.0f, Z2/100);
-		gl.glTexCoord2f(tL, tB);
-		gl.glVertex3f(X4/100, 0.0f, Z4/100);
-		gl.glTexCoord2f(tR, tB);
-		gl.glVertex3f(X3/100, 0.0f, Z3/100);
-		
-		gl.glTexCoord2f(tL,tT);
-		gl.glVertex3f(X1/100, 2.0f, Z1/100);
-		gl.glTexCoord2f(tL, tB);
-		gl.glVertex3f(X2/100, 2.0f, Z2/100);
-		gl.glTexCoord2f(tR, tB);
-		gl.glVertex3f(X4/100, 2.0f, Z4/100);
-		gl.glTexCoord2f(tR, tT);
-		gl.glVertex3f(X3/100, 2.0f, Z3/100);
-	
-		
 		gl.glEnd();
+	}
+
+	public int getDoorHeight() {
+		return o.getHeight();
+	}
+	
+	public void setDoorHeight(int height){
+		o.setHeight(height);
 	}
 
 	

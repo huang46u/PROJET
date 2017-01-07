@@ -11,6 +11,7 @@ package Modeleur;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -336,16 +337,8 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				try {
 					if(mm.mode==1){
 						mm.room.write(dir+file);
-						Room room2= new Room();
-						room2.read(dir+file);
-						for(Wall w: room2.getWalls())
-							System.out.println(w.getV1().getX());
-						for(Wall w: room2.getNavigationZone())
-							System.out.println(w.getV1().getY());
 					} else if(mm.mode==2){
 						mm.corridor.write(dir+file);
-						//Corridor corridor2=new Corridor();
-						//corridor
 					}
 				} catch (IOException exception){
 					System.out.println("cant even!");
@@ -410,6 +403,8 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		} else if (source == mm.bDoor && mm.mode==1){
 			mm.room.addDoor("Door");
 			mm.graph.repaint();
+			
+			
 		} else if (source == mm.bWindow && mm.mode==1){
 			mm.room.addWindow("Window");
 			mm.graph.repaint();
@@ -515,5 +510,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			fh.setVisible(true);
 		}
 	}
+	
+	
 
 }

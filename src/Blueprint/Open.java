@@ -16,6 +16,7 @@ import com.jogamp.opengl.GL2;
 public abstract class Open {
 	private String id, next=null;
 	private float width;
+	private int height;
 	protected Vertex v1,v2,midv;
 	private float r;
 	private String nextOpen=null;
@@ -23,6 +24,7 @@ public abstract class Open {
 	public Open(String id, Vertex v1, Vertex v2){
 		this.id=id;
 		width=v1.VtDisVt(v2);
+		height = 300;
 		this.v1=v1;
 		this.v2=v2;
 		this.r=(float)1/2;
@@ -66,6 +68,16 @@ public abstract class Open {
 	public abstract void draw(Graphics g);
 
 	public abstract void draw(GL2 gl);
+
+	public int getHeight() {
+		return height;
+	}
+	
+	public void setHeight(int height){
+		this.height=height;
+	}
+	
+	
 
 
 }
