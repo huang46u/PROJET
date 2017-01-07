@@ -95,11 +95,6 @@ public class Vertex {
 	public boolean isSelected(){
 		return selected;
 	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
 	
 	@Override
 	public int hashCode() {
