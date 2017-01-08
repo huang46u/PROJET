@@ -6,10 +6,12 @@
  * Tuteur : P. Even
  * */
 
-package Navigateur;
+package navigateur;
 
 import java.awt.FileDialog;
 import java.awt.MenuItem;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 
@@ -24,11 +26,12 @@ public class NavigateurModel {
 	protected FileDialog openDia=  new FileDialog(frame,"Ouvrir",FileDialog.LOAD);
 	
 	protected String filename;
-	protected MenuItem menutexture = new MenuItem("Texture");
 	protected FileDialog textureDia = new FileDialog(frame,"Texture",FileDialog.LOAD);
-	protected Texture texture;
-	protected String textureFileName= "images/crate.png";
-	protected String textureFileType=".png";
+	protected String textureFileName;
+	protected String textureFileType;
+	
+	// un map qui contien le  path d'image et le type d'image 
+	protected ArrayList<String> textures= new ArrayList<String>();
 	protected float textureTop, textureBottom, textureLeft, textureRight;
 
 	protected GLCanvas canvas = new GLCanvas();
@@ -139,5 +142,15 @@ public class NavigateurModel {
 	public void lookDown() {
 		lookUpAngle += lookUpIncrement;
 	}
+
+	
+	public void initTexture(){
+		textures.add("textures/MetalPainted.jpg");
+		textures.add("textures/MetalPainted(1).jpg");
+		textures.add("textures/MetalPlatesDucts.jpg");
+		textures.add("textures/WoodFine.jpg");
+		
+	}
+
 
 }

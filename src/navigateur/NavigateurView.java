@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Navigateur;
+package navigateur;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
@@ -37,8 +37,10 @@ import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
-
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -46,20 +48,23 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import com.jogamp.opengl.util.texture.TextureIO;
 
-import Blueprint.Corridor;
-import Blueprint.Room;
+import blueprint.Corridor;
+import blueprint.Room;
 
 @SuppressWarnings("serial")
 public class NavigateurView extends GLCanvas implements GLEventListener{
 	private GLU glu;
 
 	private NavigateurModel model;
-	int[] fogModes = { GL_EXP, GL_EXP2, GL_LINEAR }; // storage for 3 types of fogs
-	int currFogFilter = 0;                           // which fog to use
-	float[] fogColor = { 0.0f, 0.0f, 0.0f, 0.0f };   // fog color
+	protected static int currTextureFilter = 0; 
+	protected static int texturestat=0;
+	protected static boolean[] textured= {false,true}; 
+	//Tableau de texture qui contient des texture
+	protected static Texture[] texturebox=new Texture[4];
 
 
 	// ** Constructeur par default */
@@ -90,11 +95,41 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 		GL2 gl = drawable.getGL().getGL2();
 		glu = new GLU();
 		gl.glClearColor(0.8f, 0.8f, 0.8f, 1.0f); // clear to the color of the fog
+		//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST);
 		gl.glDepthFunc(GL_LEQUAL);
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		gl.glShadeModel(GL_SMOOTH);
+		gl.glEnable (GL2.GL_TEXTURE_2D);
+		model.initTexture();
+		if(model.textures!=null){
+			try {
+				// Create a OpenGL Texture object from (URL, mipmap, file suffix)
+				// Use URL so that can read from JAR and disk file.
+				for(int i=0;i<model.textures.size();i++){
+					texturebox[i] = TextureIO.newTexture(
+							new File(model.textures.get(i)), // relative to project root 
+							false);		
+				}
+				// Use linear filter for texture if image is larger than the original texture
+				gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				// Use linear filter for texture if image is smaller than the original texture
+				gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				// Texture image flips vertically. Shall use TextureCoords class to retrieve
+				// the top, bottom, left and right coordinates, instead of using 0.0f and 1.0f.
+				TextureCoords textureCoords = texturebox[0].getImageTexCoords();
+				model.textureTop = textureCoords.top();
+				model.textureBottom = textureCoords.bottom();
+				model.textureLeft = textureCoords.left();
+				model.textureRight = textureCoords.right();
+			}
+			catch (GLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		// Set up the lighting for Light-1
 		// Ambient light does not come form a particular direction. Need some ambient 
 		// light to light up the scene. Ambient's value in RGBA
@@ -135,24 +170,30 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 		} else {
 			gl.glDisable(GL_LIGHTING);
 		}
-		  // Enables this texture's target in the current GL context's state.
-	      //model.texture.enable(gl);
-	        // same as gl.glEnable(texture.getTarget());
-	      // gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
-	      // Binds this texture to the current GL context.
-	      //model.texture.bind(gl);  // same as gl.glBindTexture(texture.getTarget(), texture.getTextureObject());
-		// ----- creer des objets -----
+		if(textured[texturestat]){
+		 // Enables this texture's target in the current GL context's state.
+	      texturebox[currTextureFilter].enable(gl);
+	      // Bind the texture with the currently chosen filter to the current OpenGL graphics context.
+	      texturebox[currTextureFilter].bind(gl);
+		}
+		
 
 		// first room
 		//gl.glColor3f(0.1f, 0.5f, 0.5f);
-		Corridor r=new Corridor();
+		
+		Room r=new Room();
 		if(model.filename!=null){
 			try {
 				r.read(model.filename);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if(!textured[texturestat]){
 			r.draw(gl);
+			}
+			else{
+				r.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);			
+				}
 		}
 	     
 	}

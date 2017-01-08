@@ -1,4 +1,4 @@
-package Blueprint;
+package blueprint;
 
 import java.awt.Graphics;
 import java.io.BufferedReader;

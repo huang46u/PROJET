@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Navigateur;
+package navigateur;
 
 import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_D;
@@ -15,7 +15,8 @@ import static java.awt.event.KeyEvent.VK_L;
 import static java.awt.event.KeyEvent.VK_S;
 import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_W;
-
+import static java.awt.event.KeyEvent.VK_F;
+import static java.awt.event.KeyEvent.VK_V;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -25,7 +26,8 @@ import java.io.IOException;
 
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
-import Blueprint.Room;
+
+import blueprint.Room;
 
 
 
@@ -58,10 +60,14 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 		case VK_DOWN: // player looks down, scene rotates in positive x-axis
 			model.lookDown();
 			break;
-		case VK_L: // toggle light on/off
-			model.turnLight();
+		case VK_F:
+			NavigateurView.currTextureFilter = (NavigateurView.currTextureFilter + 1) % NavigateurView.texturebox.length;
 			break;
+		case VK_V:
+			NavigateurView.texturestat = (NavigateurView.texturestat + 1) % NavigateurView.textured.length;
+			model.turnLight();
 		}
+		
 	}
 
 	@Override

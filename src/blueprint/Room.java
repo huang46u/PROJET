@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Blueprint;
+package blueprint;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,7 +32,7 @@ import javax.swing.JTextField;
 
 import com.jogamp.opengl.GL2;
 
-import Modeleur.ModeleurModel;
+import modeleur.ModeleurModel;
 
 public class Room implements Space {
 	private String id;
@@ -366,7 +366,7 @@ public class Room implements Space {
 		
 		gl.glBegin(GL2.GL_POLYGON);
 		for(Wall w : walls){
-			gl.glVertex3f(w.getV1().getX()/100, 2.0f, w.getV1().getY()/100);
+			gl.glVertex3f(w.getV1().getX()/100, 1.0f, w.getV1().getY()/100);
 			}
 		gl.glEnd();
 	}

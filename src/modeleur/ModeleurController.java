@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Modeleur;
+package modeleur;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,10 +26,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import Blueprint.Corridor;
-import Blueprint.Door;
-import Blueprint.Room;
-import Blueprint.Wall;
+import blueprint.Corridor;
+import blueprint.Door;
+import blueprint.Room;
+import blueprint.Wall;
 
 /**
  * class ModeleurController 

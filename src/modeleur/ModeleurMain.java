@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Modeleur;
+package modeleur;
 
 import java.awt.EventQueue;
 

@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Blueprint;
+package blueprint;
 
 import java.awt.Graphics;
 
@@ -76,6 +76,8 @@ public abstract class Open {
 	public void setHeight(int height){
 		this.height=height;
 	}
+
+	public abstract void draw(GL2 gl, float tT, float tB, float tL, float tR);
 	
 	
 

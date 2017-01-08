@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Blueprint;
+package blueprint;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
-import Modeleur.ModeleurModel;
+import modeleur.ModeleurModel;
 
 public class Wall {
 	private Vertex v1;
@@ -352,7 +352,6 @@ public class Wall {
 	public void draw (GL2 gl)
 	{
 		if(o==null){
-			float weight = 10f;
 			float X1 = v1.getX();
 			float Z1 = v1.getY();
 			float X2 = v2.getX();
@@ -374,24 +373,28 @@ public class Wall {
 	}
 	
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR){
-		float weight = 1f;
-		float X1 = v1.getX();
-		float Z1 = v1.getY();
-		float X2 = v2.getX();
-		float Z2 = v2.getY();
 		
-		gl.glBegin(GL2.GL_QUADS);
-		
-		gl.glTexCoord2f(tL,tB);
-		gl.glVertex3f(X1/100, 2.0f, Z1/100);
-		gl.glTexCoord2f(tR, tB);
-		gl.glVertex3f(X2/100, 2.0f, Z2/100);
-		gl.glTexCoord2f(tR, tT);
-		gl.glVertex3f(X2/100, 0.0f, Z2/100);
-		gl.glTexCoord2f(tL, tT);
-		gl.glVertex3f(X1/100, 0.0f, Z1/100);
-		
-		gl.glEnd();
+		if(o==null){
+			float X1 = v1.getX();
+			float Z1 = v1.getY();
+			float X2 = v2.getX();
+			float Z2 = v2.getY();
+			gl.glBegin(GL2.GL_QUADS);			
+				gl.glTexCoord2f(tL,tB);
+				gl.glVertex3f(X1/100, 1.0f, Z1/100);
+				gl.glTexCoord2f(tR, tB);
+				gl.glVertex3f(X2/100, 1.0f, Z2/100);
+				gl.glTexCoord2f(tR, tT);
+				gl.glVertex3f(X2/100, 0.0f, Z2/100);
+				gl.glTexCoord2f(tL, tT);
+				gl.glVertex3f(X1/100, 0.0f, Z1/100);
+			
+			gl.glEnd();
+		} else {
+			new Wall(v1,o.getV1()).draw(gl, tT, tB, tL, tR);
+			o.draw(gl, tT, tB, tL, tR);
+			new Wall(o.getV2(),v2).draw(gl, tT, tB, tL, tR);
+		}
 	}
 
 	public int getDoorHeight() {

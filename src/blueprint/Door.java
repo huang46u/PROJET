@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Blueprint;
+package blueprint;
 
 import java.awt.Graphics;
 
@@ -29,7 +29,6 @@ public class Door extends Open {
 
 	@Override
 	public void draw(GL2 gl) {
-		float weight = 10f;
 		float X1 = v1.getX();
 		float Z1 = v1.getY();
 		float X2 = v2.getX();
@@ -42,6 +41,27 @@ public class Door extends Open {
 			gl.glVertex3f(X2/100, 1.0f, Z2/100);
 			gl.glVertex3f(X2/100, 0.75f, Z2/100);
 			gl.glVertex3f(X1/100, 0.75f, Z1/100);
+
+		gl.glEnd();
+	}
+	@Override
+	public void draw(GL2 gl, float tT, float tB, float tL, float tR) {
+		float X1 = v1.getX();
+		float Z1 = v1.getY();
+		float X2 = v2.getX();
+		float Z2 = v2.getY();
+
+		gl.glBegin(GL2.GL_QUADS);
+
+
+		gl.glTexCoord2f(tL,tB);
+		gl.glVertex3f(X1/100, 1.0f, Z1/100);
+		gl.glTexCoord2f(tR, tB);
+		gl.glVertex3f(X2/100, 1.0f, Z2/100);
+		gl.glTexCoord2f(tR, tT);
+		gl.glVertex3f(X2/100, 0.75f, Z2/100);
+		gl.glTexCoord2f(tL, tT);
+		gl.glVertex3f(X1/100, 0.75f, Z1/100);
 
 		gl.glEnd();
 	}

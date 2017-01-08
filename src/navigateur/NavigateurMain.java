@@ -6,7 +6,7 @@
  * Tuteur : P. Even
  * */
 
-package Navigateur;
+package navigateur;
 
 import java.awt.Dimension;
 import java.awt.Menu;
@@ -66,10 +66,9 @@ public class NavigateurMain extends JFrame {
 		fileMenu = new Menu("Fichier"); 	
 		fileMenu.add(model.openItem);     
 		fileMenu.add(model.closeItem);  
-		fileMenu.add(model.menutexture);
 		model.closeItem.addActionListener(controller);
 		model.openItem.addActionListener(controller);
-		model.menutexture.addActionListener(controller);
+		
 		bar.add(fileMenu);  
 
 		model.frame.setMenuBar(bar);    

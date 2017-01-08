@@ -6,11 +6,11 @@
  * Tuteur : P. Even
  * */
 
-package Blueprint;
+package blueprint;
 
 import java.awt.Graphics;
 
-import Modeleur.ModeleurModel;
+import modeleur.ModeleurModel;
 
 public class Vertex {
 	private float x;
