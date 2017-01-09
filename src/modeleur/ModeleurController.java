@@ -403,13 +403,13 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.validate();
 			mm.graph.repaint();
 		} else if (source == mm.bRectangle && mm.mode==1){
-			mm.room = new Room(4,"Rectangle", mm.screenWidth);
+			mm.room = new Room(4,"ROOM", mm.screenWidth);
 			mm.graph.repaint();
 		} else if (source == mm.bHexagon && mm.mode==1){
-			mm.room = new Room(6,"Hexagone", mm.screenWidth);
+			mm.room = new Room(6,"ROOM", mm.screenWidth);
 			mm.graph.repaint();
 		} else if (source == mm.bOctogon && mm.mode==1){
-			mm.room = new Room(8,"Octogone", mm.screenWidth);
+			mm.room = new Room(8,"ROOM", mm.screenWidth);
 			mm.graph.repaint();
 		} else if (source == mm.bRoomHeight && mm.mode==1){
 			if (igBRH == null) igBRH=new JDialog();
@@ -454,7 +454,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.repaint();
 		} else if (source == mm.bRoomAnnuler && mm.mode==1){
 			mm.mode = 0;
-			mm.room = new Room(4,"Rectangle", mm.screenWidth);
+			mm.room = new Room(4,"ROOM", mm.screenWidth);
 
 			mm.toolbar.removeAll();
 			
@@ -621,7 +621,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			igBNR.setVisible(true);
 		} else if (source == mm.bCorridorAnnuler && mm.mode==2){
 			mm.mode = 0;
-			mm.corridor = new Corridor("Couloir", mm.screenWidth);
+			mm.corridor = new Corridor("CORRIDOR", mm.screenWidth);
 			mm.toolbar.removeAll();
 			
 			mm.toolbar.add(mm.optsMode, BorderLayout.CENTER);

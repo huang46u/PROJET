@@ -185,10 +185,16 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 		
 		
 		if(!textured[texturestat]){
-			model.room.draw(gl);
+			if(model.isRoomFile)
+				model.room.draw(gl);
+			else 
+				model.corridor.draw(gl);
 		}
 		else{
-			model.room.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);			
+			if(model.isRoomFile)
+				model.room.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);
+			else 
+				model.corridor.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);
 		}
 		
 	     

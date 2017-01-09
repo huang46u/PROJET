@@ -153,8 +153,10 @@ public class Room implements Space {
 	
 	public float[] isInZoneNav(float x1, float y1, float x2, float y2){
 		float[] coords = new float[2];
+		float eps = (float) 0.001;
 		coords[0] = x2;
 		coords[1] = y2;
+		
 		if(zone!=null){
 			int n = zone.size();
 			for(int i=0; i<n; i++){
@@ -165,35 +167,44 @@ public class Room implements Space {
 					float vy1 = zone.get(i).getV1().getY();
 					float vx2 = zone.get(i).getV2().getX();
 					float vy2 = zone.get(i).getV2().getY();
-					if(vx1 == vx2){
-						coords[0] = vx1;
-						float maxy = vy1;
-						float miny = vy2;
+					if(vx1 - vx2 < eps){
+						coords[0] = vx1/100;
+						float maxy, miny;
 						if (vy1 < vy2){
 							maxy = vy2;
 							miny = vy1;
 						}
-						if (y1>maxy)
+						else{
+							maxy = vy1;
+							miny = vy2;
+						}
+						if (y1>maxy){
+							System.out.println(" x max min");
 							coords[1]=maxy/100;
+							}
 						else if (y1<miny)
 							coords[1]=miny/100; 
 						else 
-							coords[1]=y1;
+							coords[1]=y1/100;
+						
 						return coords;
-					}else if (vy1 == vy2){
-						coords[0] = vy1;
-						float maxx = vx1;
-						float minx = vx2;
+					}else if (vy1 - vy2 <eps){
+						coords[1] = vy1/100;
+						float maxx, minx;
 						if (vx1 < vx2){
 							maxx = vx2;
 							minx = vx1;
+						}else{
+							maxx = vx1;
+							minx = vx2;
 						}
 						if (x1>maxx)
-							coords[1]=maxx/100;
+							coords[0]=maxx/100;
 						else if (x1<minx)
-							coords[1]=minx/100; 
+							coords[0]=minx/100; 
 						else 
-							coords[1]=x1;
+							coords[0]=x1/100;
+						System.out.println(" y max min");
 						return coords;
 					}else{
 						
@@ -201,15 +212,23 @@ public class Room implements Space {
 						float b1 = vy1-a1*vx1;
 						float a2 = -1/a1;
 						float b2 = y1 - a2*x1;
-						float X = (b2-b1)/(a1-a2);
-						System.out.println(X);
-						float Y = a2*X+b2;
-						coords[0] = X/100;
-						coords[1] = Y/100;
-						return coords;
+						if(a1-a2<eps){
+							
+							return coords;
+						}
+						else{
+							float X = (b2-b1)/(a1-a2);
+							System.out.println(X);
+							float Y = a2*X+b2;
+							coords[0] = X/100;
+							coords[1] = Y/100;
+							System.out.println(" a 1<> a2");
+							return coords;
+						}
 					}
 				}
-			}
+			} 
+			System.out.println(" true");
 			return coords;
 		}
 		return coords;

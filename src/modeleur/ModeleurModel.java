@@ -326,8 +326,8 @@ public class ModeleurModel extends Observable{
 		bg.add(graph, BorderLayout.CENTER);
 		bg.add(toolbar, BorderLayout.WEST);
 		
-		room = new Room(4,"Rectangle", screenWidth);
-		corridor = new Corridor("Couloir", screenWidth);
+		room = new Room(4,"ROOM", screenWidth);
+		corridor = new Corridor("CORRIDOR", screenWidth);
 		
 	}
 	

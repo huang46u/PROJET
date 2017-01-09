@@ -22,7 +22,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import com.jogamp.newt.event.MouseEvent;
@@ -58,6 +60,7 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 				model.moveIn();
 				if(!model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100)){
 					float[] coords = model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100, orX, orZ);
+					System.out.println(coords[0]+" "+coords[1]);
 					model.setPosX(coords[0]);
 					model.setPosZ(coords[1]);
 				}
@@ -117,18 +120,44 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 		if ( source == model.openItem){
 			model.openDia.setVisible(true);  
 			dirPath = model.openDia.getDirectory();  
-			fileName = model.openDia.getFile(); 	
+			fileName = model.openDia.getFile();
 			
 			try {
-				model.room.read(dirPath+fileName);
+				BufferedReader br = new BufferedReader(new FileReader(dirPath+fileName));
+			    StringBuilder sb = new StringBuilder();
+			    String line = br.readLine();
+
+			    if(line.startsWith("CORRIDOR"))
+			    	model.isRoomFile = false;
+			    
+			    br.close();
+
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			};
+			} 
+			
+			if(model.isRoomFile){
+				try {
+					model.room.read(dirPath+fileName);
+					float[] entrance = model.findRoomEntrance();
+					model.setPosX(entrance[0]);
+					model.setPosZ(entrance[1]);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				};
+			} else{
+				try {
+					model.corridor.read(dirPath+fileName);
+					float[] entrance = model.findCorridorEntrance();
+					model.setPosX(entrance[0]);
+					model.setPosZ(entrance[1]);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				};
+			}
 		}
 		
-		float[] entrance = model.findEntrance();
-		model.setPosX(entrance[0]);
-		model.setPosZ(entrance[1]);
+		
 		
 	}
 

@@ -63,6 +63,8 @@ public class NavigateurModel {
 	private static float posX = 2;
 	private float posZ = 2;
 	
+	protected boolean isRoomFile = true;
+	
 	protected boolean modeNavigation  = false;
 
 	/** retourner le coordonnée de X */
@@ -173,7 +175,7 @@ public class NavigateurModel {
 		
 	}
 	
-	public float[] findEntrance(){
+	public float[] findRoomEntrance(){
 		float[] entrance = new float[2];
 		for (Wall w : room.getWalls()){
 			if(w.getOpen() != null && w.getOpen() instanceof Door){
@@ -185,6 +187,7 @@ public class NavigateurModel {
 				}
 			}
 		}
+		System.out.println("dont have entrance");
 		return null;
 	}
 
@@ -196,6 +199,13 @@ public class NavigateurModel {
 	public boolean isInZoneNav() {
 		
 		return false;
+	}
+
+	public float[] findCorridorEntrance() {
+		float[] entrance = new float[2];
+		entrance[0] = (float) corridor.getTraces().get(corridor.getTraces().size()-1).getV2().getX()/100;
+		entrance[1] = (float) corridor.getTraces().get(corridor.getTraces().size()-1).getV2().getY()/100;
+		return entrance;
 	}
 
 
