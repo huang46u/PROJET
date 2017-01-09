@@ -35,7 +35,12 @@ public class Vertex {
 		return (float) Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
 	}
 	
-	public float ptDisVt(float x, float Y){
+	public float ptDisVt(float x, float y){
+		if(this.x == x){
+			return Math.abs(this.y - y);
+		}else if (this.y == y){
+			return Math.abs(this.x - x);
+		}
 		return (float) Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
 	}
 	

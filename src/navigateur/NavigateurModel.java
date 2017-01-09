@@ -10,6 +10,7 @@ package navigateur;
 
 import java.awt.FileDialog;
 import java.awt.MenuItem;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,6 +23,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import blueprint.Corridor;
 import blueprint.Door;
 import blueprint.Room;
+import blueprint.Vertex;
 import blueprint.Wall;
 public class NavigateurModel {
 
@@ -207,6 +209,89 @@ public class NavigateurModel {
 		entrance[1] = (float) corridor.getTraces().get(corridor.getTraces().size()-1).getV2().getY()/100;
 		return entrance;
 	}
+	
+	//public void 
+	
+	/** charger un fichier */
+	public void loadFile(String filename){
+		if(isRoomFile){
+			try {
+				room=new Room();
+				room.read(filename);
+				float[] entrance = findRoomEntrance();
+				setPosX(entrance[0]);
+				setPosZ(entrance[1]);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			};
+		} else{
+			try {
+				corridor=new Corridor();
+				corridor.read(filename);
+				float[] entrance = findCorridorEntrance();
+				setPosX(entrance[0]);
+				setPosZ(entrance[1]);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			};
+		}
+	}
 
-
+	/** verifier si il est conncter a des espaces */
+	public boolean hasNext(){
+		if(isRoomFile){
+			for (Wall w : room.getWalls()){
+				if(w.getOpen() instanceof Door){
+					Door d = (Door) w.getOpen();
+					if(!d.isEntrance()) return true;
+				}
+			}
+			return false;
+		}else{
+			if(corridor.getIdNextRoom()!=null)
+				return true;
+			return false;
+		}
+		
+	}
+	
+	public void next(){
+		// ratio for entering the next
+		float x = posX*100;
+		float y = posZ*100;
+		float disR =(float) 50;
+		
+		if(isRoomFile){
+			ArrayList<String> cors = new ArrayList<String>();
+			ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+			for (Wall w : room.getWalls()){
+				if(w.getOpen() instanceof Door){
+					Door d = (Door) w.getOpen();
+					if(!d.isEntrance()){ 
+						cors.add(d.getNext());
+						vertices.add(d.getMidVertex());
+					}
+				}
+			}
+			int i = 0;
+			for (Vertex v: vertices){
+				if (v.ptDisVt(x, y) < disR){
+					//System.out.println(v.ptDisVt(x, y));
+					i = vertices.indexOf(v);
+					isRoomFile =false;
+					loadFile("corridors/"+cors.get(i));
+				}
+			}
+			
+		}else{
+			if(corridor.getIdNextRoom() != null){
+				Vertex v = corridor.getTraces().get(0).getV1();
+				if(v.ptDisVt(x, y) < disR){
+					isRoomFile = true;
+					//corridor = null;
+					loadFile("rooms/"+corridor.getIdNextRoom());
+				}
+			}
+		}
+	}
 }

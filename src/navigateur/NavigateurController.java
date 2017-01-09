@@ -52,15 +52,18 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 			model.turnRight();
 			break;
 		case VK_W:	// player move in, posX and posZ become smaller
-			if (!model.modeNavigation)
+			if (!model.modeNavigation){
 				model.moveIn();
+				if(model.hasNext())
+					model.next();
+			}
 			else{
 				float orX = model.getPosX();
 				float orZ = model.getPosZ();
 				model.moveIn();
 				if(!model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100)){
 					float[] coords = model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100, orX, orZ);
-					System.out.println(coords[0]+" "+coords[1]);
+					//System.out.println(coords[0]+" "+coords[1]);
 					model.setPosX(coords[0]);
 					model.setPosZ(coords[1]);
 				}
@@ -136,25 +139,8 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 				e1.printStackTrace();
 			} 
 			
-			if(model.isRoomFile){
-				try {
-					model.room.read(dirPath+fileName);
-					float[] entrance = model.findRoomEntrance();
-					model.setPosX(entrance[0]);
-					model.setPosZ(entrance[1]);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				};
-			} else{
-				try {
-					model.corridor.read(dirPath+fileName);
-					float[] entrance = model.findCorridorEntrance();
-					model.setPosX(entrance[0]);
-					model.setPosZ(entrance[1]);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				};
-			}
+			model.loadFile(dirPath+fileName);
+			
 		}
 		
 		

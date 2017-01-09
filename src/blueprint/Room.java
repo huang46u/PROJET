@@ -179,7 +179,7 @@ public class Room implements Space {
 							miny = vy2;
 						}
 						if (y1>maxy){
-							System.out.println(" x max min");
+							//System.out.println(" x max min");
 							coords[1]=maxy/100;
 							}
 						else if (y1<miny)
@@ -204,7 +204,7 @@ public class Room implements Space {
 							coords[0]=minx/100; 
 						else 
 							coords[0]=x1/100;
-						System.out.println(" y max min");
+						//System.out.println(" y max min");
 						return coords;
 					}else{
 						
@@ -212,23 +212,19 @@ public class Room implements Space {
 						float b1 = vy1-a1*vx1;
 						float a2 = -1/a1;
 						float b2 = y1 - a2*x1;
-						if(a1-a2<eps){
-							
-							return coords;
-						}
-						else{
-							float X = (b2-b1)/(a1-a2);
-							System.out.println(X);
-							float Y = a2*X+b2;
-							coords[0] = X/100;
-							coords[1] = Y/100;
-							System.out.println(" a 1<> a2");
-							return coords;
-						}
+						float X = (b2-b1)/(a1-a2);
+							//System.out.println(X);
+						float Y = a2*X+b2;
+						coords[0] = X/100;
+						coords[1] = Y/100;
+							//System.out.println(" a 1<> a2");
+						return coords;
 					}
-				}
+				} 
 			} 
-			System.out.println(" true");
+			coords[0] = x1;
+			coords[1] = y1;
+			//System.out.println(" true");
 			return coords;
 		}
 		return coords;
@@ -664,14 +660,6 @@ public class Room implements Space {
 			if (in != null)
 				in.close();
 		}	
-	}
-
-	class DoorGraph extends JPanel {
-		public void paintComponent (Graphics g) {
-			super.paintComponent(g);
-			this.setBackground(ModeleurModel.DARKGREY3);
-			
-		}
 	}
 
 	public void setHeight(int height) {

@@ -288,6 +288,34 @@ public class Corridor implements Space{
 			w.draw(gl);
 		}
 		
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(0.2f, 0.8f, 0.2f);
+		
+		for (int i=0 ; i< leftWalls.size();i++){
+			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, 0.0f, leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, 0.0f, leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 0.0f, rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 0.0f, rightWalls.get(i).getV1().getY()/100);
+			
+		}
+		
+		gl.glEnd();
+		
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(0.2f, 0.8f, 0.2f);
+		
+		for (int i=0 ; i< leftWalls.size();i++){
+			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV1().getY()/100);
+			
+		}
+		
+		gl.glEnd();
+		
 	}
 
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR) {
@@ -297,7 +325,35 @@ public class Corridor implements Space{
 		
 		for (Wall w : rightWalls){
 			w.draw(gl, tT, tB, tL, tR);
-		}	
+		}
+		
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(0.2f, 0.8f, 0.2f);
+		
+		for (int i=0 ; i< leftWalls.size();i++){
+			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, 0.0f, leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, 0.0f, leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 0.0f, rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 0.0f, rightWalls.get(i).getV1().getY()/100);
+			
+		}
+		
+		gl.glEnd();
+		
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(0.2f, 0.8f, 0.2f);
+		
+		for (int i=0 ; i< leftWalls.size();i++){
+			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV1().getY()/100);
+			
+		}
+		
+		gl.glEnd();
 	}
 
 }
