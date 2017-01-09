@@ -18,21 +18,15 @@ public class Corridor implements Space{
 	private ArrayList<Wall> traces = new ArrayList<Wall>();
 	private ArrayList<Wall> leftWalls = new ArrayList<Wall>();
 	private ArrayList<Wall> rightWalls = new ArrayList<Wall>();
-	private int height;
 	private int width;
-	private int nbStairs;
 	private String idNextRoom;
-	private String idLastRoom;
 	
 	/** Constructeur par default */
-	public Corridor(String id){
+	public Corridor(String id, int screenWidth){
 		this.id=id;
-		traces.add(new Wall(new Vertex(520,120),new Vertex(520,800)));
-		height=400;
+		traces.add(new Wall(new Vertex(screenWidth/2,screenWidth/8),new Vertex(screenWidth/2,screenWidth/8*7)));
 		width=120;
-		nbStairs=0;
 		idNextRoom=null;
-		idLastRoom=null;
 		updateWalls();
 	}
 	
@@ -104,7 +98,7 @@ public class Corridor implements Space{
 		
 		for (int i=0;i<traces.size();i++){
 			ArrayList<Wall> sidWalls = new ArrayList<Wall>();
-			sidWalls = traces.get(i).findWalls(width);
+			sidWalls = traces.get(i).findWalls(width, traces.get(i).getHeight());
 			leftWalls.add(sidWalls.get(0));
 			rightWalls.add(sidWalls.get(1));
 		}
@@ -193,11 +187,12 @@ public class Corridor implements Space{
 	}
 	
 	public int getHeight(){
-		return height;
+		return leftWalls.get(0).getHeight();
 	}
 	
 	public void setHeight(int height){
-		this.height=height;
+		for(Wall w : traces)
+			w.setHeight(height);
 	}
 	
 	public int getWidth() {
@@ -208,28 +203,12 @@ public class Corridor implements Space{
 		this.width = width;
 	}
 	
-	public int getNbStairs(){
-		return nbStairs;
-	}
-	
-	public void setNbStairs(int nbStairs) {
-		this.nbStairs = nbStairs;
-	}
-	
 	public String getIdNextRoom() {
 		return idNextRoom;
 	}
 
 	public void setIdNextRoom(String idNextRoom) {
 		this.idNextRoom = idNextRoom;
-	}
-
-	public String getIdLastRoom() {
-		return idLastRoom;
-	}
-
-	public void setIdLastRoom(String idLastRoom) {
-		this.idLastRoom = idLastRoom;
 	}
 	
 	@Override
@@ -261,23 +240,13 @@ public class Corridor implements Space{
 	        	 in.print(w.getV2().getX());
 	        	 in.print(" ");
 	        	 in.print(w.getV2().getY());
+	        	 in.print(" ");
+	        	 in.print(w.getHeight());
 	        	 in.print("\n");
 	         }
-	         in.print("HEIGHT");
-	         in.print(" ");
-	         in.print(height);
-	         in.print("\n");
 	         in.print("WIDTH");
 	         in.print(" ");
 	         in.print(width);
-	         in.print("\n");
-	         in.print("STAIRS");
-	         in.print(" ");
-	         in.print(nbStairs);
-	         in.print("\n");
-	         in.print("LAST");
-	         in.print(" ");
-	         in.print(idLastRoom);
 	         in.print("\n");
 	         in.print("NEXT");
 	         in.print(" ");
@@ -299,12 +268,9 @@ public class Corridor implements Space{
 	         while ((line = in.readLine()) != null){
 	        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
 	        	 String l=scanner.next();
-	        	 if(l.startsWith("HEIGHT")) height=scanner.nextInt();
-	        	 else if(l.startsWith("WIDTH")) width=scanner.nextInt();
-	        	 else if(l.startsWith("STAIRS")) nbStairs=scanner.nextInt();
-	        	 else if(l.startsWith("LAST")) idLastRoom=scanner.next();
+	        	 if(l.startsWith("WIDTH")) width=scanner.nextInt();
 	        	 else if(l.startsWith("NEXT")) idNextRoom=scanner.next();
-	        	 else traces.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
+	        	 else traces.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat()),scanner.nextInt()));
 	         }
 	         updateWalls();
 		} finally {
@@ -322,6 +288,16 @@ public class Corridor implements Space{
 			w.draw(gl);
 		}
 		
+	}
+
+	public void draw(GL2 gl, float tT, float tB, float tL, float tR) {
+		for (Wall w : leftWalls){
+			w.draw(gl, tT, tB, tL, tR);
+		}
+		
+		for (Wall w : rightWalls){
+			w.draw(gl, tT, tB, tL, tR);
+		}	
 	}
 
 }

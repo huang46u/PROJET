@@ -144,6 +144,8 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 			gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosion, 0);
 			gl.glEnable(GL_LIGHT1); // Enable Light-1
 			gl.glDisable(GL_LIGHTING); // But disable lighting
+			
+		
 	}
 	/** 
 	 * Called back by the animator to perform rendering
@@ -181,20 +183,14 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 		// first room
 		//gl.glColor3f(0.1f, 0.5f, 0.5f);
 		
-		Room r=new Room();
-		if(model.filename!=null){
-			try {
-				r.read(model.filename);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if(!textured[texturestat]){
-			r.draw(gl);
-			}
-			else{
-				r.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);			
-				}
+		
+		if(!textured[texturestat]){
+			model.room.draw(gl);
 		}
+		else{
+			model.room.draw(gl, model.textureTop, model.textureBottom, model.textureLeft,model.textureRight);			
+		}
+		
 	     
 	}
 	/**

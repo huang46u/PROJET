@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.util.Observable;
 
 import javax.swing.BorderFactory;
@@ -48,21 +49,24 @@ public class ModeleurModel extends Observable{
 	protected Graph graph;
 	
 	/** Le bouton d'enregistrement */
-	protected JButton bSave;
+	protected JButton bSave, bOpen;
 	
 	/** Une entiere qui signifie le mode de dessiner: 1 - Chambre(Room) ; 2 - Couloir(Corridor) */
 	protected int mode=0;
 	
 	protected JPanel bg, toolbar, optsMode, optsRoom, optsCorridor, optsWall, optsTraces, optsVertex, save;
 	
-	protected JButton 	bRoom, bCorridor, bRectangle, bHexagon, bOctogon, bVertex, bAddVertex, bDoor, bWindow, 
-						bDelVertex, bWidth, bNextRoom, bLastRoom, bHeight, bNbStairs, bNavigation;
+	protected JButton 	bRoom, bRoomAnnuler, bCorridor, bRectangle, bHexagon, bOctogon, bRoomHeight, bVertex, bAddVertex, bDoor, bWindow, 
+						bDelVertex, bWidth, bNextRoom, bHeight, bCorridorAnnuler, bNavigation;
 	
 	protected FileDialog saveDia =  new FileDialog(new JFrame(),"ENREGISTREMENT",FileDialog.SAVE);
+	protected FileDialog openDia = new FileDialog(new JFrame(), "OUVRIR", FileDialog.LOAD);
 	
-	protected Room room = new Room(4,"Rectangle");
+	int screenHeight,screenWidth;
 	
-	protected Corridor corridor = new Corridor("Couloir");
+	protected Room room;
+	
+	protected Corridor corridor;
 	
 	/** rayon de Vertex */
 	protected float r=(float)25/2;
@@ -75,7 +79,7 @@ public class ModeleurModel extends Observable{
 		// Options pour les modes
 		optsMode = new JPanel(new GridBagLayout());
 		optsMode.setBackground(ModeleurModel.DARKGREY2);
-		optsMode.setPreferredSize(new Dimension(130*2,420*2));
+		optsMode.setPreferredSize(new Dimension(130*2,410*2));
 		
 		bRoom= new JButton("CHAMBRE");
 		bRoom.setFont(font);
@@ -124,12 +128,26 @@ public class ModeleurModel extends Observable{
 		bOctogon.setPreferredSize(new Dimension(110*2,70));
 		bOctogon.setFocusPainted(false);
 		
+		bRoomHeight= new JButton("HAUTEUR");
+		bRoomHeight.setFont(font);
+		bRoomHeight.setForeground(ModeleurModel.BLACK);
+		bRoomHeight.setBackground(ModeleurModel.DARKGREY4);
+		bRoomHeight.setPreferredSize(new Dimension(110*2,70));
+		bRoomHeight.setFocusPainted(false);
+		
 		bNavigation= new JButton("ZONE NAV.");
 		bNavigation.setFont(font);
 		bNavigation.setForeground(ModeleurModel.BLACK);
 		bNavigation.setBackground(ModeleurModel.DARKGREY4);
 		bNavigation.setPreferredSize(new Dimension(110*2,70));
 		bNavigation.setFocusPainted(false);
+		
+		bRoomAnnuler= new JButton("ANNULER");
+		bRoomAnnuler.setFont(font);
+		bRoomAnnuler.setForeground(ModeleurModel.BLACK);
+		bRoomAnnuler.setBackground(ModeleurModel.DARKGREY4);
+		bRoomAnnuler.setPreferredSize(new Dimension(110*2,70));
+		bRoomAnnuler.setFocusPainted(false);
 		
 		g.gridx = 0;
 		g.gridy = 1;
@@ -140,7 +158,11 @@ public class ModeleurModel extends Observable{
 		g.gridy = 3;
 		optsRoom.add(bOctogon,g);
 		g.gridy = 4;
+		optsRoom.add(bRoomHeight,g);
+		g.gridy = 5;
 		optsRoom.add(bNavigation,g);
+		g.gridy = 6;
+		optsRoom.add(bRoomAnnuler, g);
 		
 		// Options pour les murs
 		optsWall = new JPanel(new GridBagLayout());
@@ -220,6 +242,13 @@ public class ModeleurModel extends Observable{
 		bSave.setPreferredSize(new Dimension(110*2,70));
 		bSave.setFocusPainted(false);
 		
+		bOpen = new JButton("OUVRIR");
+		bOpen.setFont(font);
+		bOpen.setForeground(ModeleurModel.BLACK);
+		bOpen.setBackground(ModeleurModel.DARKGREY4);
+		bOpen.setPreferredSize(new Dimension(110*2,70));
+		bOpen.setFocusPainted(false);
+		
 		// Options pour la couloir
 		optsCorridor = new JPanel(new GridBagLayout());
 		optsCorridor.setBackground(ModeleurModel.DARKGREY2);
@@ -239,19 +268,12 @@ public class ModeleurModel extends Observable{
 		bHeight.setPreferredSize(new Dimension(110*2,70));
 		bHeight.setFocusPainted(false);
 		
-		bNbStairs = new JButton("ETAGES");
-		bNbStairs.setFont(font);
-		bNbStairs.setForeground(ModeleurModel.BLACK);
-		bNbStairs.setBackground(ModeleurModel.DARKGREY4);
-		bNbStairs.setPreferredSize(new Dimension(110*2,70));
-		bNbStairs.setFocusPainted(false);
-		
-		bLastRoom = new JButton("ENTRANT");
-		bLastRoom.setFont(font);
-		bLastRoom.setForeground(ModeleurModel.BLACK);
-		bLastRoom.setBackground(ModeleurModel.DARKGREY4);
-		bLastRoom.setPreferredSize(new Dimension(110*2,70));
-		bLastRoom.setFocusPainted(false);
+		bCorridorAnnuler = new JButton("ANNULER");
+		bCorridorAnnuler.setFont(font);
+		bCorridorAnnuler.setForeground(ModeleurModel.BLACK);
+		bCorridorAnnuler.setBackground(ModeleurModel.DARKGREY4);
+		bCorridorAnnuler.setPreferredSize(new Dimension(110*2,70));
+		bCorridorAnnuler.setFocusPainted(false);
 		
 		bNextRoom = new JButton("SORTANT");
 		bNextRoom.setFont(font);
@@ -267,17 +289,17 @@ public class ModeleurModel extends Observable{
 		g.gridy = 2;
 		optsCorridor.add(bHeight, g);
 		g.gridy = 3;
-		optsCorridor.add(bNbStairs, g);
-		g.gridy = 4;
-		optsCorridor.add(bLastRoom, g);
-		g.gridy = 5;
 		optsCorridor.add(bNextRoom, g);
+		g.gridy = 4;
+		optsCorridor.add(bCorridorAnnuler, g);
+		
 		
 		// save contient bsave
 		save = new JPanel();
 		save.setBackground(ModeleurModel.DARKGREY2);
-		save.setPreferredSize(new Dimension(130*2,45*2));
-		save.add(bSave);
+		save.setPreferredSize(new Dimension(130*2,160));
+		save.add(bOpen, BorderLayout.NORTH);
+		save.add(bSave, BorderLayout.CENTER);
 		
 		// bg contient le toolbar et le graphe
 		bg = new JPanel();
@@ -290,15 +312,22 @@ public class ModeleurModel extends Observable{
 		toolbar.setLayout(new BorderLayout(10,10));
 		toolbar.setBackground(ModeleurModel.DARKGREY2);
 		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		screenHeight = (int) screenSize.getHeight();
+		screenWidth = screenHeight-screenHeight/10;
+		
 		graph = new Graph();
-		graph.setPreferredSize(new Dimension(535*2,340*2));
+		graph.setPreferredSize(new Dimension(screenHeight, screenWidth));
 	
 		//toolbar.add(menu, BorderLayout.CENTER);
 		toolbar.add(optsMode, BorderLayout.CENTER);
-		toolbar.add(save, BorderLayout.SOUTH);
+		//toolbar.add(save, BorderLayout.SOUTH);
 				
 		bg.add(graph, BorderLayout.CENTER);
 		bg.add(toolbar, BorderLayout.WEST);
+		
+		room = new Room(4,"Rectangle", screenWidth);
+		corridor = new Corridor("Couloir", screenWidth);
 		
 	}
 	

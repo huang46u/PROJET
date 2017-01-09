@@ -30,7 +30,14 @@ public class Wall {
 
 	public Wall(Vertex v1, Vertex v2) {
 		super();
-		height=400;
+		height=100;
+		this.v1 = v1;
+		this.v2 = v2;
+	}
+	
+	public Wall(Vertex v1, Vertex v2, int height){
+		super();
+		this.height = height;
 		this.v1 = v1;
 		this.v2 = v2;
 	}
@@ -50,6 +57,10 @@ public class Wall {
 	public void setV2(Vertex v2){
 		this.v2 = v2;
 	}
+
+	public int getHeight() {
+		return height;
+	}
 	
 	public void setHeight(int height){
 		this.height=height;
@@ -58,6 +69,15 @@ public class Wall {
 	public Open getOpen(){
 		return o;
 	}
+	
+	public int getOpenHeight() {
+		return o.getHeight();
+	}
+	
+	public void setOpenHeight(int height){
+		o.setHeight(height);
+	}
+
 	
 	public boolean isSelected(){
 		return selected;
@@ -187,19 +207,19 @@ public class Wall {
 	}
 	
 	/** find the the wall on each side of the trace */
-	public ArrayList<Wall> findWalls(int width){
+	public ArrayList<Wall> findWalls(int width, int height){
 		ArrayList<Wall> sidWalls = new ArrayList<Wall>();
 		if(v1.getX()==v2.getX()){
 			sidWalls.add(new Wall(new Vertex(v1.getX()+width/2, v1.getY()), 
-					new Vertex(v2.getX()+width/2, v2.getY())));
+					new Vertex(v2.getX()+width/2, v2.getY()), height));
 			sidWalls.add(new Wall(new Vertex(v1.getX()-width/2, v1.getY()), 
-					new Vertex(v2.getX()-width/2, v2.getY())));
+					new Vertex(v2.getX()-width/2, v2.getY()), height));
 		}
 		else if(v1.getY()==v2.getY()){
 			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()+width/2), 
-					new Vertex(v2.getX(), v2.getY()+width/2)));
+					new Vertex(v2.getX(), v2.getY()+width/2), height));
 			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()-width/2), 
-					new Vertex(v2.getX(), v2.getY()-width/2)));
+					new Vertex(v2.getX(), v2.getY()-width/2), height));
 		}
 		else{
 			float a = (v1.getY()-v2.getY())/(v1.getX()-v2.getX());
@@ -208,25 +228,25 @@ public class Wall {
 			float dX = (float) Math.sqrt(((width/2)*(width/2))/(1+aN*aN));
 			float dY = aN*dX;
 			sidWalls.add(new Wall(new Vertex(v1.getX()+dX, v1.getY()+dY), 
-									new Vertex(v2.getX()+dX, v2.getY()+dY)));
+									new Vertex(v2.getX()+dX, v2.getY()+dY), height));
 			sidWalls.add(new Wall(new Vertex(v1.getX()-dX, v1.getY()-dY), 
-					new Vertex(v2.getX()-dX, v2.getY()-dY)));
+					new Vertex(v2.getX()-dX, v2.getY()-dY), height));
 		}
 		return sidWalls;
 	}
 	
-	public void addDoor(String id) {
+	public void addDoor(String id, boolean entrant) {
 		float midX=(v1.getX()+v2.getX())/2;
 		float midY=(v1.getY()+v2.getY())/2;
 		Vertex c1 = new Vertex((v1.getX()+midX)/2,(v1.getY()+midY)/2);
 		Vertex c2 = new Vertex((v2.getX()+midX)/2,(v2.getY()+midY)/2);
-		o = new Door(id, c1, c2);		
+		o = new Door(id, c1, c2, entrant);		
 	}
 
-	public void addDoor(String id, float f, float g, float h, float i){
+	public void addDoor(String id, float f, float g, float h, float i, boolean entrant, int height, String next){
 		Vertex c1 = new Vertex(f,g);
 		Vertex c2 = new Vertex(h,i);
-		o = new Door(id, c1, c2);
+		o = new Door(id, c1, c2, entrant, height, next);
 	}
 	
 	public void updateOpen(){
@@ -274,10 +294,10 @@ public class Wall {
 		o = new Window(id, c1, c2);
 	}
 	
-	public void addWindow(String id, float f, float g, float h, float i) {
+	public void addWindow(String id, float f, float g, float h, float i, int height, int hB) {
 		Vertex c1 = new Vertex(f,g);
 		Vertex c2 = new Vertex(h,i);
-		o = new Window(id, c1, c2);
+		o = new Window(id, c1, c2, height, hB);
 	}
 	
 	public float[] moveOpen(float x, float y){
@@ -359,16 +379,16 @@ public class Wall {
 			gl.glBegin(GL2.GL_QUADS);
 			gl.glColor3f(0.4f, 0.3f, 0.8f);
 			
-				gl.glVertex3f(X1/100, 1.0f, Z1/100);
-				gl.glVertex3f(X2/100, 1.0f, Z2/100);
+				gl.glVertex3f(X1/100, height/100, Z1/100);
+				gl.glVertex3f(X2/100, height/100, Z2/100);
 				gl.glVertex3f(X2/100, 0.0f, Z2/100);
 				gl.glVertex3f(X1/100, 0.0f, Z1/100);
 			
 			gl.glEnd();
 		} else {
-			new Wall(v1,o.getV1()).draw(gl);
-			o.draw(gl);
-			new Wall(o.getV2(),v2).draw(gl);
+			new Wall(v1,o.getV1(), height).draw(gl);
+			o.draw(gl, height);
+			new Wall(o.getV2(),v2, height).draw(gl);
 		}
 	}
 	
@@ -381,9 +401,9 @@ public class Wall {
 			float Z2 = v2.getY();
 			gl.glBegin(GL2.GL_QUADS);			
 				gl.glTexCoord2f(tL,tB);
-				gl.glVertex3f(X1/100, 1.0f, Z1/100);
+				gl.glVertex3f(X1/100, height/100, Z1/100);
 				gl.glTexCoord2f(tR, tB);
-				gl.glVertex3f(X2/100, 1.0f, Z2/100);
+				gl.glVertex3f(X2/100, height/100, Z2/100);
 				gl.glTexCoord2f(tR, tT);
 				gl.glVertex3f(X2/100, 0.0f, Z2/100);
 				gl.glTexCoord2f(tL, tT);
@@ -391,19 +411,45 @@ public class Wall {
 			
 			gl.glEnd();
 		} else {
-			new Wall(v1,o.getV1()).draw(gl, tT, tB, tL, tR);
-			o.draw(gl, tT, tB, tL, tR);
-			new Wall(o.getV2(),v2).draw(gl, tT, tB, tL, tR);
+			new Wall(v1,o.getV1(), height).draw(gl, tT, tB, tL, tR);
+			o.draw(gl, tT, tB, tL, tR, height);
+			new Wall(o.getV2(),v2, height).draw(gl, tT, tB, tL, tR);
 		}
 	}
 
-	public int getDoorHeight() {
-		return o.getHeight();
+	public void setWindowHeight(int n) {
+		if (o != null && o instanceof Window){
+			Window win = (Window) o;
+			win.setHeightBottom(n);
+		}
 	}
-	
-	public void setDoorHeight(int height){
-		o.setHeight(height);
+
+	public int getWindowHeight() {
+		if (o != null && o instanceof Window){
+			Window win = (Window) o;
+			return win.getHeightBottom();
+		}
+		System.out.println("not a window");
+		return -1;
 	}
+
+	public void setNext(String s) {
+		if (o != null && o instanceof Door) {
+			Door d = (Door) o;
+			d.setNext(s);
+		}
+		
+	}
+
+	public String getNext() {
+		if (o != null && o instanceof Door) {
+			Door d = (Door) o;
+			return d.getNext();
+		}
+		return null;
+	}
+
+
 
 	
 	

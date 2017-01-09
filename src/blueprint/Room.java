@@ -8,6 +8,7 @@
 
 package blueprint;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,9 +27,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.jogamp.opengl.GL2;
@@ -38,37 +43,39 @@ public class Room implements Space {
 	private String id;
 	private ArrayList<Wall> walls = new ArrayList<Wall>();
 	private ArrayList<Wall> zone = new ArrayList<Wall>();
-	private boolean modeNavigation = false;
+	private boolean modeNavigation;
+	private static JDialog ig1, ig2;
 	
 	public Room(){
 	}
 	
-	public Room(int nb, String id) {
+	public Room(int nb, String id, int screenWidth) {
 		this.id=id;
+		modeNavigation = false;
 		switch (nb) {
-		case 4: walls.add(new Wall(new Vertex(190,120),new Vertex(190,800)));
-				walls.add(new Wall(new Vertex(190,800),new Vertex(850,800)));
-				walls.add(new Wall(new Vertex(850,800),new Vertex(850,120)));
-				walls.add(new Wall(new Vertex(850,120),new Vertex(190,120)));
-				walls.get(1).addDoor("Door");;
+		case 4: walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/4),new Vertex(screenWidth/4,screenWidth/4*3)));
+				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/4*3)));
+				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/4)));
+				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/4)));
+				walls.get(1).addDoor("Door", true);;
 				break;
-		case 6: walls.add(new Wall(new Vertex(340,120),new Vertex(190,460)));
-				walls.add(new Wall(new Vertex(190,460),new Vertex(340,800)));
-				walls.add(new Wall(new Vertex(340,800),new Vertex(700,800)));
-				walls.add(new Wall(new Vertex(700,800),new Vertex(850,460)));
-				walls.add(new Wall(new Vertex(850,460),new Vertex(700,120)));
-				walls.add(new Wall(new Vertex(700,120),new Vertex(340,120)));
-				walls.get(2).addDoor("Door");
+		case 6: walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/2)));
+				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/2),new Vertex(screenWidth/3,screenWidth/4*3)));
+				walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4*3),new Vertex(screenWidth/3*2,screenWidth/4*3)));
+				walls.add(new Wall(new Vertex(screenWidth/3*2,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/2)));
+				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/2),new Vertex(screenWidth/3*2,screenWidth/4)));
+				walls.add(new Wall(new Vertex(screenWidth/3*2,screenWidth/4),new Vertex(screenWidth/3,screenWidth/4)));
+				walls.get(2).addDoor("Door", true);
 				break;
-		case 8: walls.add(new Wall(new Vertex(355,120),new Vertex(190,290)));
-				walls.add(new Wall(new Vertex(190,290),new Vertex(190,630)));
-				walls.add(new Wall(new Vertex(190,630),new Vertex(355,800)));
-				walls.add(new Wall(new Vertex(355,800),new Vertex(685,800)));
-				walls.add(new Wall(new Vertex(685,800),new Vertex(850,630)));
-				walls.add(new Wall(new Vertex(850,630),new Vertex(850,290)));
-				walls.add(new Wall(new Vertex(850,290),new Vertex(685,120)));
-				walls.add(new Wall(new Vertex(685,120),new Vertex(355,120)));
-				walls.get(3).addDoor("Door");
+		case 8: walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/3)));
+				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/3),new Vertex(screenWidth/4,screenWidth/3*2)));
+				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/3*2),new Vertex(screenWidth/3,screenWidth/4*3)));
+				walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4*3),new Vertex(screenWidth/3*2,screenWidth/4*3)));
+				walls.add(new Wall(new Vertex(screenWidth/3*2,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/3*2)));
+				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/3*2),new Vertex(screenWidth/4*3,screenWidth/3)));
+				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/3),new Vertex(screenWidth/3*2,screenWidth/4)));
+				walls.add(new Wall(new Vertex(screenWidth/3*2,screenWidth/4),new Vertex(screenWidth/3,screenWidth/4)));
+				walls.get(3).addDoor("Door", true);
 				break;
 		default: break;
 		}
@@ -129,6 +136,83 @@ public class Room implements Space {
 		if (position > 0) return 1;
 		else if (position < 0 ) return -1;
 		return 0;
+	}
+	
+	public boolean isInZoneNav(float x, float y){
+		if(zone!=null){
+			int n = zone.size();
+			for(int i=0; i<n; i++){
+				int pt = ptPosition(x, y, zone.get(i).getV1(), zone.get(i).getV2());
+				if (pt == 1)
+					return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public float[] isInZoneNav(float x1, float y1, float x2, float y2){
+		float[] coords = new float[2];
+		coords[0] = x2;
+		coords[1] = y2;
+		if(zone!=null){
+			int n = zone.size();
+			for(int i=0; i<n; i++){
+				
+				int pt = ptPosition(x1, y1, zone.get(i).getV1(), zone.get(i).getV2());
+				if (pt == 1){
+					float vx1 = zone.get(i).getV1().getX();
+					float vy1 = zone.get(i).getV1().getY();
+					float vx2 = zone.get(i).getV2().getX();
+					float vy2 = zone.get(i).getV2().getY();
+					if(vx1 == vx2){
+						coords[0] = vx1;
+						float maxy = vy1;
+						float miny = vy2;
+						if (vy1 < vy2){
+							maxy = vy2;
+							miny = vy1;
+						}
+						if (y1>maxy)
+							coords[1]=maxy/100;
+						else if (y1<miny)
+							coords[1]=miny/100; 
+						else 
+							coords[1]=y1;
+						return coords;
+					}else if (vy1 == vy2){
+						coords[0] = vy1;
+						float maxx = vx1;
+						float minx = vx2;
+						if (vx1 < vx2){
+							maxx = vx2;
+							minx = vx1;
+						}
+						if (x1>maxx)
+							coords[1]=maxx/100;
+						else if (x1<minx)
+							coords[1]=minx/100; 
+						else 
+							coords[1]=x1;
+						return coords;
+					}else{
+						
+						float a1 = (vy1-vy2)/(vx1-vx2);
+						float b1 = vy1-a1*vx1;
+						float a2 = -1/a1;
+						float b2 = y1 - a2*x1;
+						float X = (b2-b1)/(a1-a2);
+						System.out.println(X);
+						float Y = a2*X+b2;
+						coords[0] = X/100;
+						coords[1] = Y/100;
+						return coords;
+					}
+				}
+			}
+			return coords;
+		}
+		return coords;
 	}
 	
 	public static float[] findIntersectionPoint(Wall w1, Wall w2){
@@ -221,12 +305,12 @@ public class Room implements Space {
 		return true;
 	}
 	
-	public void addDoor(String id){
+	public void addDoor(String id, boolean entrant){
 		for(Wall w: walls){
 			if(w.isSelected()){
-				w.addDoor(id);
+				w.addDoor(id, entrant);
 				
-				JFrame ig=new JFrame();
+				if (ig1 == null) ig1=new JDialog();
 				
 				JTextField input; //Composants textuels de l'interface
 				 
@@ -239,11 +323,11 @@ public class Room implements Space {
 			        	JTextField jt = (JTextField) e.getSource();
 			     		String s = jt.getText();
 			     		int n = Integer.parseInt(s);
-			     		w.setDoorHeight(n);
+			     		w.setOpenHeight(n);
 			            }
 			          });
 				input.setFont(font);
-				input.setText(""+w.getDoorHeight());
+				input.setText(""+w.getOpenHeight());
 				 
 				JPanel controlPanel= new JPanel(new GridLayout(1,2));
 				JLabel nb = new JLabel("HAUTEUR ",JLabel.CENTER);
@@ -254,10 +338,43 @@ public class Room implements Space {
 				controlPanel.add(nb);
 				controlPanel.add(input);
 				
-				ig.getContentPane().add(controlPanel);
-				ig.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				ig.pack();
-				ig.setVisible(true);
+				JTextField input2; //Composants textuels de l'interface
+				 //JPanel Nord
+				input2= new JTextField(10);
+				input2.setPreferredSize(new Dimension(200,30));
+				input2.addActionListener(new ActionListener() {
+			         public void actionPerformed(ActionEvent e) {
+			        	JTextField jt = (JTextField) e.getSource();
+			     		String s = jt.getText();
+			     		w.setNext(s);
+			            }
+			          });
+				input2.setFont(font);
+				input2.setText(""+w.getNext());
+				 
+				JPanel controlPanel2= new JPanel(new GridLayout(1,2));
+				JLabel nb2 = new JLabel("CONNECTER A",JLabel.CENTER);
+				nb2.setFont(font);
+				nb2.setForeground(ModeleurModel.BLACK);
+				controlPanel2.setBackground(ModeleurModel.DARKGREY4);
+				nb2.setPreferredSize(new Dimension(110*2,70));
+				controlPanel2.add(nb2);
+				controlPanel2.add(input2);
+				
+				File folder = new File("corridors");
+				File[] listOffiles = folder.listFiles();
+				JTextArea list = new JTextArea();
+				list.append("\n Les couloirs a choisir : \n\n");
+				for (File f: listOffiles)
+					list.append(" # "+f.getName()+"\n");
+				list.setFont(font);
+				
+				ig1.getContentPane().add(controlPanel, BorderLayout.NORTH);
+				ig1.getContentPane().add(controlPanel2, BorderLayout.CENTER);
+				ig1.getContentPane().add(new JScrollPane(list),BorderLayout.SOUTH);
+				ig1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				ig1.pack();
+				ig1.setVisible(true);
 			}
 		}
 	}
@@ -266,6 +383,64 @@ public class Room implements Space {
 		for(Wall w: walls){
 			if(w.isSelected()){
 				w.addWindow(id);
+				
+				if (ig2 == null) ig2=new JDialog();
+				
+				JTextField input; //Composants textuels de l'interface
+				 
+				Font font = new Font("Arial", Font.BOLD, 20);
+				 //JPanel Nord
+				input= new JTextField(10);
+				input.setPreferredSize(new Dimension(200,30));
+				input.addActionListener(new ActionListener() {
+			         public void actionPerformed(ActionEvent e) {
+			        	JTextField jt = (JTextField) e.getSource();
+			     		String s = jt.getText();
+			     		int n = Integer.parseInt(s);
+			     		w.setOpenHeight(n);
+			            }
+			          });
+				input.setFont(font);
+				input.setText(""+w.getOpenHeight());
+				 
+				JPanel controlPanel= new JPanel(new GridLayout(1,2));
+				JLabel nb = new JLabel("HAUTEUR A",JLabel.CENTER);
+				nb.setFont(font);
+				nb.setForeground(ModeleurModel.BLACK);
+				controlPanel.setBackground(ModeleurModel.DARKGREY4);
+				nb.setPreferredSize(new Dimension(110*2,70));
+				controlPanel.add(nb);
+				controlPanel.add(input);
+				
+				JTextField input2; //Composants textuels de l'interface
+				 //JPanel Nord
+				input2= new JTextField(10);
+				input2.setPreferredSize(new Dimension(200,30));
+				input2.addActionListener(new ActionListener() {
+			         public void actionPerformed(ActionEvent e) {
+			        	JTextField jt = (JTextField) e.getSource();
+			     		String s = jt.getText();
+			     		int n = Integer.parseInt(s);
+			     		w.setWindowHeight(n);
+			            }
+			          });
+				input2.setFont(font);
+				input2.setText(""+w.getWindowHeight());
+				 
+				JPanel controlPanel2= new JPanel(new GridLayout(1,2));
+				JLabel nb2 = new JLabel("HAUTEUR B",JLabel.CENTER);
+				nb2.setFont(font);
+				nb2.setForeground(ModeleurModel.BLACK);
+				controlPanel2.setBackground(ModeleurModel.DARKGREY4);
+				nb2.setPreferredSize(new Dimension(110*2,70));
+				controlPanel2.add(nb2);
+				controlPanel2.add(input2);
+				
+				ig2.getContentPane().add(controlPanel, BorderLayout.NORTH);
+				ig2.getContentPane().add(controlPanel2, BorderLayout.CENTER);
+				ig2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				ig2.pack();
+				ig2.setVisible(true);
 			}
 		}
 		
@@ -348,7 +523,7 @@ public class Room implements Space {
 		gl.glBegin(GL2.GL_POLYGON);
 		gl.glColor3f(0.2f, 0.8f, 0.2f);
 			for (Wall w: walls){
-				gl.glVertex3f(w.getV1().getX()/100, 1.0f, w.getV1().getY()/100);
+				gl.glVertex3f(w.getV1().getX()/100, w.getHeight()/100, w.getV1().getY()/100);
 			}
 		gl.glEnd();
 	}
@@ -366,7 +541,7 @@ public class Room implements Space {
 		
 		gl.glBegin(GL2.GL_POLYGON);
 		for(Wall w : walls){
-			gl.glVertex3f(w.getV1().getX()/100, 1.0f, w.getV1().getY()/100);
+			gl.glVertex3f(w.getV1().getX()/100, w.getHeight()/100, w.getV1().getY()/100);
 			}
 		gl.glEnd();
 	}
@@ -387,6 +562,8 @@ public class Room implements Space {
 	        	 in.print(w.getV2().getX());
 	        	 in.print(" ");
 	        	 in.print(w.getV2().getY());
+	        	 in.print(" ");
+	        	 in.print(w.getHeight());
 	        	 
 	        	 if (w.getOpen()!=null){
 	        		 in.print(" ");
@@ -399,6 +576,21 @@ public class Room implements Space {
 		        	 in.print(w.getOpen().getV2().getX());
 		        	 in.print(" ");
 		        	 in.print(w.getOpen().getV2().getY());
+		        	 if(w.getOpen() instanceof Door){
+		        		 Door d = (Door) w.getOpen();
+		        		 in.print(" ");
+		        		 in.print(d.isEntrance());
+		        		 in.print(" ");
+		        		 in.print(d.getHeight());
+		        		 in.print(" ");
+		        		 in.print(d.getNext());
+		        	 } else if (w.getOpen() instanceof Window){
+		        		 Window win = (Window) w.getOpen();
+		        		 in.print(" ");
+		        		 in.print(win.getHeight());
+		        		 in.print(" ");
+		        		 in.print(win.getHeightBottom());
+		        	 }
 	        	 }
 	        	 
 	        	 in.print("\n");
@@ -433,13 +625,13 @@ public class Room implements Space {
 	         while ((line = in.readLine()) != null){
 	        	 if(!line.startsWith("TRACE")){
 		        	 Scanner scanner = new Scanner(line).useDelimiter(" ");
-		        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat())));
+		        	 walls.add(new Wall(new Vertex(scanner.nextFloat(),scanner.nextFloat()),new Vertex(scanner.nextFloat(),scanner.nextFloat()), scanner.nextInt()));
 		        	 if (scanner.hasNext()){
 		        		 String id=scanner.next();
 		        		 if(id.startsWith("Door")){
-		        			 walls.get(walls.size()-1).addDoor(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+		        			 walls.get(walls.size()-1).addDoor(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat(), scanner.nextBoolean(), scanner.nextInt(), scanner.next());
 		        		 } else if (id.startsWith("Window")){
-		        			 walls.get(walls.size()-1).addWindow(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat());
+		        			 walls.get(walls.size()-1).addWindow(id, scanner.nextFloat(), scanner.nextFloat(),scanner.nextFloat(),scanner.nextFloat(), scanner.nextInt(), scanner.nextInt());
 		        		 }
 		        	 }
 	        	 }
@@ -461,6 +653,24 @@ public class Room implements Space {
 			this.setBackground(ModeleurModel.DARKGREY3);
 			
 		}
+	}
+
+	public void setHeight(int height) {
+		for (Wall w: walls){
+			w.setHeight(height);
+		}
+	}
+
+	public int getHeight() {
+		return walls.get(0).getHeight();
+	}
+
+	public void setID(String id) {
+		this.id = id;
+	}
+	
+	public String getID(){
+		return id;
 	}
 
 	

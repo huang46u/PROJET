@@ -14,17 +14,16 @@ import com.jogamp.opengl.GL2;
 
 /** class Open */
 public abstract class Open {
-	private String id, next=null;
+	private String id;
 	private float width;
-	private int height;
+	protected int height;
 	protected Vertex v1,v2,midv;
 	private float r;
-	private String nextOpen=null;
 	
 	public Open(String id, Vertex v1, Vertex v2){
 		this.id=id;
 		width=v1.VtDisVt(v2);
-		height = 300;
+		height = 75;
 		this.v1=v1;
 		this.v2=v2;
 		this.r=(float)1/2;
@@ -63,12 +62,6 @@ public abstract class Open {
 		this.width=width;
 	}
 	
-	public abstract void move(float x1, float y1, float x2, float y2);
-	
-	public abstract void draw(Graphics g);
-
-	public abstract void draw(GL2 gl);
-
 	public int getHeight() {
 		return height;
 	}
@@ -76,8 +69,14 @@ public abstract class Open {
 	public void setHeight(int height){
 		this.height=height;
 	}
+	
+	public abstract void move(float x1, float y1, float x2, float y2);
+	
+	public abstract void draw(Graphics g);
 
-	public abstract void draw(GL2 gl, float tT, float tB, float tL, float tR);
+	public abstract void draw(GL2 gl, int heightWall);
+
+	public abstract void draw(GL2 gl, float tT, float tB, float tL, float tR, int heightWall);
 	
 	
 

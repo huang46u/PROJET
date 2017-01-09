@@ -35,6 +35,7 @@ public class ModeleurView extends JFrame {
 		
 		// le bouton d'enregistrement
 		mm.bSave.addActionListener(mc);
+		mm.bOpen.addActionListener(mc);
 		
 		mm.bDelVertex.addActionListener(mc);
 		

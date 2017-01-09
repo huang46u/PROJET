@@ -18,6 +18,11 @@ import javax.swing.JFrame;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
+
+import blueprint.Corridor;
+import blueprint.Door;
+import blueprint.Room;
+import blueprint.Wall;
 public class NavigateurModel {
 
 	protected MenuItem openItem= new MenuItem("Ouvrir");
@@ -38,8 +43,8 @@ public class NavigateurModel {
 	private static final int FPS = 60;
 	protected final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
 	
-	private static float posX = 2;
-	private float posZ = 2;
+	//private static float posX = 2;
+	//private float posZ = 2;
 	private float headingY = 0; // heading of player; about y-axis
 	private float lookUpAngle =0.0f;
 
@@ -51,6 +56,14 @@ public class NavigateurModel {
 	private float walkBiasAngle = 0;
 
 	private static boolean isLightOn = false;
+	
+	protected Room room = new Room();
+	protected Corridor corridor = new Corridor();
+	
+	private static float posX = 2;
+	private float posZ = 2;
+	
+	protected boolean modeNavigation  = false;
 
 	/** retourner le coordonnée de X */
 	public float getPosX(){
@@ -60,6 +73,14 @@ public class NavigateurModel {
 	/** retourner le coordonnée de Z */
 	public float getPosZ(){
 		return posZ;
+	}
+	
+	public void setPosX(float posX){
+		this.posX = posX;
+	}
+	
+	public void setPosZ(float posZ){
+		this.posZ=posZ;
 	}
 	
 	/** retourner le coordonnée de Y */
@@ -150,6 +171,31 @@ public class NavigateurModel {
 		textures.add("textures/MetalPlatesDucts.jpg");
 		textures.add("textures/WoodFine.jpg");
 		
+	}
+	
+	public float[] findEntrance(){
+		float[] entrance = new float[2];
+		for (Wall w : room.getWalls()){
+			if(w.getOpen() != null && w.getOpen() instanceof Door){
+				Door d = (Door)w.getOpen();
+				if(d.isEntrance()){
+					entrance[0] = (float)d.getMidVertex().getX()/100;
+					entrance[1] = (float)d.getMidVertex().getY()/100;
+					return entrance;
+				}
+			}
+		}
+		return null;
+	}
+
+	public void turnNavigation() {
+		modeNavigation = !modeNavigation;
+		
+	}
+
+	public boolean isInZoneNav() {
+		
+		return false;
 	}
 
 

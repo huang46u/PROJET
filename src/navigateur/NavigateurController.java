@@ -17,6 +17,7 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_W;
 import static java.awt.event.KeyEvent.VK_F;
 import static java.awt.event.KeyEvent.VK_V;
+import static java.awt.event.KeyEvent.VK_N;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -49,10 +50,31 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 			model.turnRight();
 			break;
 		case VK_W:	// player move in, posX and posZ become smaller
-			model.moveIn();
+			if (!model.modeNavigation)
+				model.moveIn();
+			else{
+				float orX = model.getPosX();
+				float orZ = model.getPosZ();
+				model.moveIn();
+				if(!model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100)){
+					float[] coords = model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100, orX, orZ);
+					model.setPosX(coords[0]);
+					model.setPosZ(coords[1]);
+				}
+			}
 			break;
 		case VK_S: //player move out, posX and posZ become bigger
-			model.moveOut();
+			if (!model.modeNavigation)
+				model.moveOut();
+			else{
+				float orX = model.getPosX();
+				float orZ = model.getPosZ();
+				model.moveOut();
+				if(!model.room.isInZoneNav(model.getPosX()*100, model.getPosZ()*100)){
+					model.setPosX(orX);
+					model.setPosZ(orZ);
+				}
+			}
 			break;
 		case VK_UP: // player looks up, scene rotates in negative x-axis
 			model.lookUp();
@@ -66,6 +88,10 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 		case VK_V:
 			NavigateurView.texturestat = (NavigateurView.texturestat + 1) % NavigateurView.textured.length;
 			model.turnLight();
+			break;
+		case VK_N:
+			model.turnNavigation();
+			break;
 		}
 		
 	}
@@ -84,16 +110,25 @@ public class NavigateurController implements KeyListener,ActionListener,MouseLis
 
 	@Override
 	public void actionPerformed(ActionEvent e ) {
-		// TODO Auto-generated method stub 
+		String dirPath = model.openDia.getDirectory();  
+		String fileName = model.openDia.getFile(); 
+		
 		Object source = e.getSource();
 		if ( source == model.openItem){
 			model.openDia.setVisible(true);  
-			String dirPath = model.openDia.getDirectory();  
-			String fileName = model.openDia.getFile(); 
-			File file = new File(dirPath,fileName);  	
-			model.filename = fileName;
+			dirPath = model.openDia.getDirectory();  
+			fileName = model.openDia.getFile(); 	
 			
+			try {
+				model.room.read(dirPath+fileName);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			};
 		}
+		
+		float[] entrance = model.findEntrance();
+		model.setPosX(entrance[0]);
+		model.setPosZ(entrance[1]);
 		
 	}
 
