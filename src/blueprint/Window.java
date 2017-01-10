@@ -1,12 +1,24 @@
+/**
+ * PT3 Poly Editor
+ * DUT Informatique 2016/2017 
+ * Auteur : HUANG Qijia
+ * 			LU Yi
+ * Tuteur : P. Even
+ * */
+
 package blueprint;
 
 import java.awt.Graphics;
 
 import com.jogamp.opengl.GL2;
 
+/** class Window */
 public class Window extends Open {
+	// ----- attrributs ----
+	/** le hauteur du bas de la fenetre*/
 	private int heightBottom;
 	
+	// ----- constructeurs -----
 	public Window(String id, Vertex v1, Vertex v2) {
 		super(id, v1, v2);
 		heightBottom = 30;
@@ -18,6 +30,7 @@ public class Window extends Open {
 		this.heightBottom = heightBottom;
 	}
 	
+	// ----- methodes -----
 	public int getHeightBottom(){
 		return heightBottom;
 	}

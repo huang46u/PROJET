@@ -1,3 +1,11 @@
+/**
+ * PT3 Poly Editor
+ * DUT Informatique 2016/2017 
+ * Auteur : HUANG Qijia
+ * 			LU Yi
+ * Tuteur : P. Even
+ * */
+
 package blueprint;
 
 import java.awt.Graphics;
@@ -13,14 +21,25 @@ import java.util.Scanner;
 
 import com.jogamp.opengl.GL2;
 
+/** class Corridor : elle consiste a des traces, une suite de mur a droit et une suite de mur a gauche, 
+ *  les duex suites de mur devraient etre genere automatiquement depandant a le largeur qu'on donne .
+ *  elle implementer l'interface Space */
 public class Corridor implements Space{
+	// ----- attributs ------
+	/** identifiant de couloir */
 	private String id;
+	/** une suite de traces representant la parcours du couloir */
 	private ArrayList<Wall> traces = new ArrayList<Wall>();
+	/** une suite de murs a gauche */
 	private ArrayList<Wall> leftWalls = new ArrayList<Wall>();
+	/** une suite de murs a droit */
 	private ArrayList<Wall> rightWalls = new ArrayList<Wall>();
+	/** largeur du couloir */
 	private int width;
+	/** le nom de fichier qui devrait charger la chambre prochaine */
 	private String idNextRoom;
 	
+	// ------ constructeur ------
 	/** Constructeur par default */
 	public Corridor(String id, int screenWidth){
 		this.id=id;
@@ -30,11 +49,17 @@ public class Corridor implements Space{
 		updateWalls();
 	}
 	
+	/** Constructeur qui construit une objet null, pour les charger de fichiers.
+	 *  il n'est pas securise. # A optimiser. # */
 	public Corridor() {
 		// TODO Auto-generated constructor stub
 	}
 	
+	// ------ methodes ------
+	/** retourner une Vertex pour la mise en jour de les duex suites de murs. 
+	 *  il recheche le point d'intersection de deux murs */
 	public static Vertex findIntersectionPoint(Wall w1, Wall w2){
+		
 		float x,y;
 		float x1 = w1.getV1().getX();
 		float y1 = w1.getV1().getY();
@@ -44,13 +69,15 @@ public class Corridor implements Space{
 		float y3 = w2.getV1().getY();
 		float x4 = w2.getV2().getX();
 		float y4 = w2.getV2().getY();
-		if(x1==x2 && x3==x4){
+		
+		if(x1==x2 && x3==x4){ // pas d'intersection
 			return null;
 		}
-		else if(y1==y2 && y3==y4){
+		else if(y1==y2 && y3==y4){ // pas d'intersection
 			return null;
 		}
-		else if(x1==x2){
+		// en cas d'avoir le meme x
+		else if(x1==x2){ 
 			float a2 = (y3-y4)/(x3-x4);
 			float b2 = y3-x3*a2;
 			
@@ -64,6 +91,7 @@ public class Corridor implements Space{
 			x=x3;
 			y=a1*x+b1;
 		}
+		// en cas d'avoir le meme y
 		else if(y1==y2){
 			float a2 = (y3-y4)/(x3-x4);
 			float b2 = y3-x3*a2;
@@ -81,7 +109,7 @@ public class Corridor implements Space{
 		else{
 			float a1 = (y1-y2)/(x1-x2);
 			float a2 = (y3-y4)/(x3-x4);
-			if(Math.abs(a1-a2)<0.0001) return null;
+			if(Math.abs(a1-a2)<0.0001) return null; // pas d'intersection
 			
 			float b1 = y1-x1*a1;
 			float b2 = y3-x3*a2;
@@ -92,6 +120,7 @@ public class Corridor implements Space{
 		return new Vertex(x,y);
 	}
 	
+	/** Mettre a jour les deux suites de murs pour poursuivre la transformation de traces */
 	public void updateWalls(){
 		leftWalls.clear();
 		rightWalls.clear();
@@ -119,7 +148,35 @@ public class Corridor implements Space{
 			}
 		}
 	}
+	
+	/** retourne une suite de traces */
+	public ArrayList<Wall> getTraces(){
+		return traces;
+	}
+	
+	/** retourner le largeur de couloir */
+	public int getWidth() {
+		return width;
+	}
 
+	/** definir le largeur de couloir */
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
+	/** retourn le nom de fichier de la chambre prochaine */
+	public String getIdNextRoom() {
+		return idNextRoom;
+	}
+
+	/** definir le chambre prochaine */
+	public void setIdNextRoom(String idNextRoom) {
+		this.idNextRoom = idNextRoom;
+	}
+	
+	// les methodes qu'on a surcharger d'interface Space
+
+	@Override
 	public void addVertex(){
 		Wall tmp = null;
 		Vertex v1 = null,v2 = null,v3 = null, v4 = null;
@@ -143,6 +200,7 @@ public class Corridor implements Space{
 		}
 	}
 	
+	@Override
 	public void delVertex(){
 		Wall tmp =null;
 		Vertex v1=null;
@@ -164,6 +222,7 @@ public class Corridor implements Space{
 		
 	}
 	
+	@Override
 	public Wall nextWall(Wall w){
 		int n=traces.indexOf(w);
 		if(n==traces.size()-1){
@@ -172,6 +231,7 @@ public class Corridor implements Space{
 		return traces.get(n+1);
 	}
 	
+	@Override
 	public Wall lastWall(Wall w){
 		int n=traces.indexOf(w);
 		if(n==0){
@@ -180,35 +240,15 @@ public class Corridor implements Space{
 		return traces.get(n-1);
 	}
 	
-	
-	
-	public ArrayList<Wall> getTraces(){
-		return traces;
-	}
-	
+	@Override
 	public int getHeight(){
 		return leftWalls.get(0).getHeight();
 	}
 	
+	@Override
 	public void setHeight(int height){
 		for(Wall w : traces)
 			w.setHeight(height);
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-	
-	public String getIdNextRoom() {
-		return idNextRoom;
-	}
-
-	public void setIdNextRoom(String idNextRoom) {
-		this.idNextRoom = idNextRoom;
 	}
 	
 	@Override
@@ -224,6 +264,7 @@ public class Corridor implements Space{
 		}
 	}
 	
+	@Override
 	public void write(String filepath) throws IOException{
 		PrintWriter in = null;
 		try {
@@ -258,6 +299,7 @@ public class Corridor implements Space{
 		}	
 	}
 	
+	@Override
 	public void read(String filename) throws IOException{
 		BufferedReader in = null;
 		try {
@@ -278,7 +320,8 @@ public class Corridor implements Space{
 				in.close();
 		}	
 	}
-
+	
+	@Override
 	public void draw(GL2 gl) {
 		for (Wall w : leftWalls){
 			w.draw(gl);
@@ -318,6 +361,7 @@ public class Corridor implements Space{
 		
 	}
 
+	@Override
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR) {
 		for (Wall w : leftWalls){
 			w.draw(gl, tT, tB, tL, tR);

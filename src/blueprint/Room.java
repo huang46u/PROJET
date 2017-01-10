@@ -39,27 +39,36 @@ import com.jogamp.opengl.GL2;
 
 import modeleur.ModeleurModel;
 
+/** class Room : cette clase doit implementer l'interface Space. Elle sert a definir les pieces qu'on doit creer */
 public class Room implements Space {
+	// ----- attrributs ----
+	/** identifiant de piece */
 	private String id;
+	/** une suite de mur */
 	private ArrayList<Wall> walls = new ArrayList<Wall>();
+	/** une suite de mur pour le zone naviagble */
 	private ArrayList<Wall> zone = new ArrayList<Wall>();
+	/** diffrencier les dessin de mur et le zone navigable */
 	private boolean modeNavigation;
+	// # A optimiser
+	/** Des dialog pour parametrer les attributs de mur et ouverture */
 	private static JDialog ig1, ig2;
 	
-	public Room(){
-	}
-	
+	// ---- constructeurs -----
+	/** constructeur par default */
 	public Room(int nb, String id, int screenWidth) {
 		this.id=id;
 		modeNavigation = false;
 		switch (nb) {
-		case 4: walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/4),new Vertex(screenWidth/4,screenWidth/4*3)));
+		case 4: // Rectangle
+				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/4),new Vertex(screenWidth/4,screenWidth/4*3)));
 				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/4*3)));
 				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/4)));
 				walls.add(new Wall(new Vertex(screenWidth/4*3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/4)));
 				walls.get(1).addDoor("Door", true);;
 				break;
-		case 6: walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/2)));
+		case 6: // Hexagone
+				walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/2)));
 				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/2),new Vertex(screenWidth/3,screenWidth/4*3)));
 				walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4*3),new Vertex(screenWidth/3*2,screenWidth/4*3)));
 				walls.add(new Wall(new Vertex(screenWidth/3*2,screenWidth/4*3),new Vertex(screenWidth/4*3,screenWidth/2)));
@@ -67,7 +76,8 @@ public class Room implements Space {
 				walls.add(new Wall(new Vertex(screenWidth/3*2,screenWidth/4),new Vertex(screenWidth/3,screenWidth/4)));
 				walls.get(2).addDoor("Door", true);
 				break;
-		case 8: walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/3)));
+		case 8: // Octogone
+				walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4),new Vertex(screenWidth/4,screenWidth/3)));
 				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/3),new Vertex(screenWidth/4,screenWidth/3*2)));
 				walls.add(new Wall(new Vertex(screenWidth/4,screenWidth/3*2),new Vertex(screenWidth/3,screenWidth/4*3)));
 				walls.add(new Wall(new Vertex(screenWidth/3,screenWidth/4*3),new Vertex(screenWidth/3*2,screenWidth/4*3)));
@@ -82,55 +92,27 @@ public class Room implements Space {
 		
 	}
 	
+	/** constructeur pour charger des chambres. # A optimiser */
+	public Room(){
+	}
+	
+	// ----- methodes -----
+	/** retourne une suite de mur */
 	public ArrayList<Wall> getWalls(){
 		return walls;
 	}
 	
-	public void addVertex(){
-		Wall tmp = null;
-		Vertex v1 = null,v2 = null,v3 = null, v4 = null;
-		
-		for(Wall w: walls){
-			if(w.isSelected()){    //il faut verifier si Open dans le mur est NULL
-				v1=w.getV1();
-				v2 = w.getV2();	
-				tmp=w;
-			}
-		}
-		if (tmp != null){
-			v3 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
-			v4 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
-			int index = walls.indexOf(tmp);
-			walls.remove(tmp);
-			walls.add(index,new Wall(v4, v2));
-			walls.add(index,new Wall(v1, v3));
-			v3.select();
-			v4.select();
-		}
+	public void setID(String id) {
+		this.id = id;
 	}
 	
-	public void delVertex(){
-		Wall tmp =null;
-		Vertex v1=null;
-		for (Wall w:walls){
-			if(w.getV2().isSelected()){
-				tmp=w;
-				v1=w.getV1();
-			}
-		}
-		if (tmp != null){
-			Wall next = nextWall(tmp);
-			Vertex v2 = next.getV2();
-			int index = walls.indexOf(tmp);
-			walls.remove(tmp);
-			walls.add(index, new Wall(v1,v2));
-			walls.remove(next);
-			
-		}
-		
-		
+	public String getID(){
+		return id;
 	}
 	
+	/** retourne 1 pour signifie le point est dans une cote de un vecteur, 
+	 *  - 1 signifie le point est dans une autre cote de un vecteur
+	 *  0 signifie le point est sur le vecteur */
 	public static int ptPosition(float x, float y, Vertex vA, Vertex vB){
 		float position = (vB.getX()-vA.getX())*(y-vA.getY())-(vB.getY()-vA.getY())*(x-vA.getX());
 		if (position > 0) return 1;
@@ -138,6 +120,7 @@ public class Room implements Space {
 		return 0;
 	}
 	
+	/** verifier si le point en argrument est dans le zone navigable */
 	public boolean isInZoneNav(float x, float y){
 		if(zone!=null){
 			int n = zone.size();
@@ -151,6 +134,8 @@ public class Room implements Space {
 		return false;
 	}
 	
+	/** verifier si le point en argrument est dans le zone navigable 
+	 *  et retourne le coordonne de glisser de camera */
 	public float[] isInZoneNav(float x1, float y1, float x2, float y2){
 		float[] coords = new float[2];
 		float eps = (float) 0.001;
@@ -253,6 +238,7 @@ public class Room implements Space {
 		return point;
 	}
 	
+	/** methode pour verfier un point est situe dans deux murs */
 	public static boolean betweenWalls(float x, float y, Wall w, Wall w1, Wall w2){
 		float r=(float)25/2;
 		int pos = ptPosition(x, y, w.getV1(), w2.getV1());
@@ -324,6 +310,9 @@ public class Room implements Space {
 		for(Wall w: walls){
 			if(w.isSelected()){
 				w.addDoor(id, entrant);
+				
+				// les codes suivants permettent de creer un jDiaglog pour parameter la porte 
+				// ils devraient depalcer a une autre class et optimiser
 				
 				if (ig1 == null) ig1=new JDialog();
 				
@@ -398,6 +387,9 @@ public class Room implements Space {
 		for(Wall w: walls){
 			if(w.isSelected()){
 				w.addWindow(id);
+				
+				// les codes suivants permettent de creer un jDiaglog pour parameter la porte 
+				// ils devraient depalcer a une autre class et optimiser
 				
 				if (ig2 == null) ig2=new JDialog();
 				
@@ -481,6 +473,9 @@ public class Room implements Space {
 		modeNavigation=false;
 	}
 	
+	// surcharger des methodes d'interface Space 
+	
+	@Override
 	public Wall nextWall(Wall w){
 		int n=walls.indexOf(w);
 		if(n==walls.size()-1){
@@ -489,6 +484,7 @@ public class Room implements Space {
 		return walls.get(n+1);
 	}
 	
+	@Override
 	public Wall lastWall(Wall w){
 		int n=walls.indexOf(w);
 		if(n==0){
@@ -505,6 +501,7 @@ public class Room implements Space {
 		return zone.get(n+1);
 	}
 	
+	@Override
 	public void draw(Graphics g){
 		if (!modeNavigation){
 			for (Wall w : zone){
@@ -523,6 +520,7 @@ public class Room implements Space {
 		}
 	}
 
+	@Override
 	public void draw(GL2 gl){
 		for (Wall w : walls){
 			w.draw(gl);
@@ -543,6 +541,7 @@ public class Room implements Space {
 		gl.glEnd();
 	}
 	
+	@Override
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR){
 		for (Wall w : walls){
 			w.draw(gl, tT,  tB,  tL, tR);
@@ -562,7 +561,7 @@ public class Room implements Space {
 	}
 	
 
-	
+	@Override
 	public void write(String filepath) throws IOException{
 		PrintWriter in = null;
 		try {
@@ -630,6 +629,7 @@ public class Room implements Space {
 		}	
 	}
 	
+	@Override
 	public void read(String filename) throws IOException{
 		BufferedReader in = null;
 		try {
@@ -662,22 +662,63 @@ public class Room implements Space {
 		}	
 	}
 
+	@Override
 	public void setHeight(int height) {
 		for (Wall w: walls){
 			w.setHeight(height);
 		}
 	}
 
+	@Override
 	public int getHeight() {
 		return walls.get(0).getHeight();
 	}
 
-	public void setID(String id) {
-		this.id = id;
+	@Override
+	public void addVertex(){
+		Wall tmp = null;
+		Vertex v1 = null,v2 = null,v3 = null, v4 = null;
+		
+		for(Wall w: walls){
+			if(w.isSelected()){    //il faut verifier si Open dans le mur est NULL
+				v1=w.getV1();
+				v2 = w.getV2();	
+				tmp=w;
+			}
+		}
+		if (tmp != null){
+			v3 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
+			v4 = new Vertex((v1.getX()+v2.getX())/2, (v1.getY()+v2.getY())/2);
+			int index = walls.indexOf(tmp);
+			walls.remove(tmp);
+			walls.add(index,new Wall(v4, v2));
+			walls.add(index,new Wall(v1, v3));
+			v3.select();
+			v4.select();
+		}
 	}
 	
-	public String getID(){
-		return id;
+	@Override
+	public void delVertex(){
+		Wall tmp =null;
+		Vertex v1=null;
+		for (Wall w:walls){
+			if(w.getV2().isSelected()){
+				tmp=w;
+				v1=w.getV1();
+			}
+		}
+		if (tmp != null){
+			Wall next = nextWall(tmp);
+			Vertex v2 = next.getV2();
+			int index = walls.indexOf(tmp);
+			walls.remove(tmp);
+			walls.add(index, new Wall(v1,v2));
+			walls.remove(next);
+			
+		}
+		
+		
 	}
 
 	

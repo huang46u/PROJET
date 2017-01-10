@@ -12,29 +12,42 @@ import java.awt.Graphics;
 
 import modeleur.ModeleurModel;
 
+/** class Vertex : cette classe definit un point avec un x et un y. 
+ *  Et il consist tous les fonctions d'utilisqtions de vertices */
 public class Vertex {
+	// ------ attributs ------
+	/** x de Vertex */
 	private float x;
+	/** y de Vertex */
 	private float y;
+	/** il aparait true si un objet Vertex est selectionne */
 	private boolean selected = false;
 	
+	// ------ constructeur ------
+	/** constructeur par default qui prend deux decimales pour les aurguments */
 	public Vertex(float x, float y) {
 		super();
 		this.x = x;
 		this.y = y;
 	}
 	
+	// ------ methodes ------
+	/** retourne la valeur de X */
 	public float getX() {
 		return x;
 	}
 	
+	/** retourne la valeur de Y */
 	public float getY() {
 		return y;
 	}
 	
+	/** retourne la distence entre un point d'entier et ce Vertex */
 	public float ptDisVt(int x, int Y){
 		return (float) Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
 	}
 	
+	/** retourne la distence entre un point de flaot et ce Vertex */
 	public float ptDisVt(float x, float y){
 		if(this.x == x){
 			return Math.abs(this.y - y);
@@ -44,14 +57,17 @@ public class Vertex {
 		return (float) Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
 	}
 	
+	/** retourne la distence entre deux Vertex */
 	public float VtDisVt(Vertex v){
 		return (float) Math.sqrt((this.x-v.getX())*(this.x-v.getX())+(this.y-v.getY())*(this.y-v.getY()));
 	}
 	
+	/** selectionner ou deselectionner un Vertex */
 	public void select(){
 		selected=!selected;
 	}
 	
+	/** selectionner un Vertex si les aurgement est dans le rayon de Vertex */
 	public void select(int x, int y){
 		if(selected) {
 			selected=!selected;
@@ -70,11 +86,13 @@ public class Vertex {
 		}
 	}
 	
+	/** deplacer le vertex a le point */
 	public void move(float x, float y){
 		this.x = x;
 		this.y = y;
 	}
 	
+	/** dessiner le Vertex */
 	public void draw (Graphics g){
 		if (selected) {
 			g.setColor(ModeleurModel.WHITE);
@@ -86,6 +104,7 @@ public class Vertex {
 		return;
 	}
 	
+	/** dessiner le Vertex en blanch si il est electionner, sinon en noir */
 	public void drawOpen (Graphics g){
 		if (selected) {
 			g.setColor(ModeleurModel.WHITE);
@@ -97,9 +116,12 @@ public class Vertex {
 		return;
 	}
 	
+	/** retourner true si le Vertex a ete selectionne, sinon false */
 	public boolean isSelected(){
 		return selected;
 	}
+	
+	// surcharger les methodes hashCode() et equals()
 	
 	@Override
 	public int hashCode() {

@@ -12,16 +12,25 @@ import java.awt.Graphics;
 
 import com.jogamp.opengl.GL2;
 
+/** class Door : elle herite de la class Open, 
+ *  avec une attibut pour differencier les entrees et sorties 
+ *  et un nom de fichier du couloir prochaine */
 public class Door extends Open {
+	// ----- attributs -----
+	/** un boolean pour differencier les entrees et sorties */
 	private boolean entrant;
+	/** le nom de fichier du couloir prochaine */
 	private String next;
 
+	// ----- constructeurs ----
+	/** Constructeur qui prend un nom, deux vertices , et un boolean */
 	public Door(String id, Vertex v1, Vertex v2, boolean entrant) {
 		super(id, v1, v2);
 		this.entrant = entrant;
 		next=null;
 	}
 	
+	/** Constructeur qui prend un nom, deux vertices, un boolean */
 	public Door(String id, Vertex v1, Vertex v2, boolean entrant, int height, String next){
 		super(id, v1, v2);
 		this.entrant = entrant;
@@ -29,17 +38,22 @@ public class Door extends Open {
 		this.next = next;
 	}
 	
+	/** retourne le nom de fichier pour charger le couloir suivant */
 	public String getNext(){
 		return next;
 	}
 	
+	/** definir le nom de fichier pour charger le couloir suivant */
 	public void setNext(String next){
 		this.next = next;
 	}
 	
+	/** retourne true si la porte est une entree, false si la porte est une sortie */
 	public boolean isEntrance(){
 		return entrant;
 	}
+	
+	// surcharger des methodes de la class Open
 
 	@Override
 	public void draw(Graphics g) {

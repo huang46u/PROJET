@@ -18,7 +18,9 @@ import com.jogamp.opengl.GL2;
 
 import modeleur.ModeleurModel;
 
+/** class Wall : elle sert a definir un mur qu'on peut selectionner et ajouter des ouvertures */
 public class Wall {
+	// ----- attrributs -----
 	private Vertex v1;
 	private Vertex v2;
 	private int height;
@@ -28,6 +30,7 @@ public class Wall {
 	/** Rayon de Vertex */
 	private float r = 25/2;
 
+	// ----- constructeurs ----
 	public Wall(Vertex v1, Vertex v2) {
 		super();
 		height=100;
@@ -42,6 +45,7 @@ public class Wall {
 		this.v2 = v2;
 	}
 	
+	// ----- methodes -----
 	public Vertex getV1(){
 		return v1;
 	}
@@ -249,6 +253,7 @@ public class Wall {
 		o = new Door(id, c1, c2, entrant, height, next);
 	}
 	
+	/** mettre a jour l'ouvrtre apres le depalcement de mur */
 	public void updateOpen(){
 		float disX = v2.getX()-v1.getX();
 		float disY = v2.getY()-v1.getY();

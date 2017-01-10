@@ -179,11 +179,7 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 	      texturebox[currTextureFilter].bind(gl);
 		}
 		
-
-		// first room
-		//gl.glColor3f(0.1f, 0.5f, 0.5f);
-		
-		
+		// On dessine la chambre ou le couloir
 		if(!textured[texturestat]){
 			if(model.isRoomFile)
 				model.room.draw(gl);
