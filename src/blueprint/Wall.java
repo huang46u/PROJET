@@ -103,13 +103,11 @@ public class Wall {
 		float minX=x2;
 		float maxY=y1;
 		float minY=y2;
-		
 		if(maxX<minX){
 			float tmp=maxX;
 			maxX=minX;
 			minX=tmp;
 		}
-		
 		if(maxY<minY){
 			float tmp=maxY;
 			maxY=minY;
@@ -172,6 +170,8 @@ public class Wall {
 		
 	}
 	
+	
+	
 	public float[] move(float x, float y){
 		Line2D l = new Line2D.Float(v1.getX()+r, v1.getY()+r, v2.getX()+r, v2.getY()+r);
 		float v1x,v1y,v2x,v2y;
@@ -213,29 +213,24 @@ public class Wall {
 	/** find the the wall on each side of the trace */
 	public ArrayList<Wall> findWalls(int width, int height){
 		ArrayList<Wall> sidWalls = new ArrayList<Wall>();
-		if(v1.getX()==v2.getX()){
-			sidWalls.add(new Wall(new Vertex(v1.getX()+width/2, v1.getY()), 
-					new Vertex(v2.getX()+width/2, v2.getY()), height));
-			sidWalls.add(new Wall(new Vertex(v1.getX()-width/2, v1.getY()), 
-					new Vertex(v2.getX()-width/2, v2.getY()), height));
-		}
-		else if(v1.getY()==v2.getY()){
-			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()+width/2), 
-					new Vertex(v2.getX(), v2.getY()+width/2), height));
-			sidWalls.add(new Wall(new Vertex(v1.getX(), v1.getY()-width/2), 
-					new Vertex(v2.getX(), v2.getY()-width/2), height));
-		}
-		else{
-			float a = (v1.getY()-v2.getY())/(v1.getX()-v2.getX());
-			// a for the new Vertex
-			float aN = -1/a;
-			float dX = (float) Math.sqrt(((width/2)*(width/2))/(1+aN*aN));
-			float dY = aN*dX;
-			sidWalls.add(new Wall(new Vertex(v1.getX()+dX, v1.getY()+dY), 
-									new Vertex(v2.getX()+dX, v2.getY()+dY), height));
-			sidWalls.add(new Wall(new Vertex(v1.getX()-dX, v1.getY()-dY), 
-					new Vertex(v2.getX()-dX, v2.getY()-dY), height));
-		}
+		
+			float Vx=v2.getX()-v1.getX();
+			float Vy=v2.getY()-v1.getY();
+			
+			float longeur=(float) Math.sqrt((Vx*Vx)+(Vy*Vy));
+			
+			float Dincx= (Vy/longeur)*(width/2);
+			float Dincy=-(Vx/longeur)*(width/2);
+			
+			float Lincx= -(Vy/longeur)*(width/2);
+			float Lincy=(Vx/longeur)*(width/2);
+			
+			sidWalls.add(new Wall(new Vertex(v1.getX()+Lincx, v1.getY()+Lincy), 
+							new Vertex(v2.getX()+Lincx, v2.getY()+Lincy), height));
+			
+			sidWalls.add(new Wall(new Vertex(v1.getX()+Dincx, v1.getY()+Dincy), 
+					new Vertex(v2.getX()+Dincx, v2.getY()+Dincy), height));
+		
 		return sidWalls;
 	}
 	
@@ -305,6 +300,27 @@ public class Wall {
 		o = new Window(id, c1, c2, height, hB);
 	}
 	
+	public float angle_entre_deux_trace(Wall w1, Wall w2){
+		float x1=w1.getV2().getX();
+		float y1=w1.getV2().getY();
+		float x2=w1.getV1().getX();
+		float y2=w1.getV1().getY();
+		float x3=w2.getV2().getX();
+		float y3=w2.getV2().getY();
+		
+		float longeurw1=w1.getV1().VtDisVt(w1.getV2());
+		float longeurw2=w2.getV1().VtDisVt(w2.getV2());
+		
+		float w1x=x3-x1;
+		float w1y=y3-y1;
+		float w2x=x2-x1;
+		float w2y=y2-y1;
+		
+		float produit_scalaire= w1x*w2x+w1y*w2y;
+		float cosangle=produit_scalaire/(longeurw1*longeurw2);
+		return cosangle;
+		
+	}
 	public float[] moveOpen(float x, float y){
 		float mx,my;
 		if (v1.getX()==v2.getX()){
@@ -368,7 +384,6 @@ public class Wall {
 		}
 		g2.setStroke(new BasicStroke(10, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));
 		g2.draw(new Line2D.Float(v1.getX()+r, v1.getY()+r, v2.getX()+r, v2.getY()+r));
-		
 		v1.draw(g);
 		v2.draw(g);
 	
@@ -395,6 +410,22 @@ public class Wall {
 			o.draw(gl, height);
 			new Wall(o.getV2(),v2, height).draw(gl);
 		}
+	}
+	
+	public void drawcorridor(GL2 gl,float h){
+		float X1 = v1.getX();
+		float Z1 = v1.getY();
+		float X2 = v2.getX();
+		float Z2 = v2.getY();
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(0.4f, 0.3f, 0.8f);
+		
+			gl.glVertex3f(X1/100, height/100, Z1/100);
+			gl.glVertex3f(X2/100, (height+h)/100, Z2/100);
+			gl.glVertex3f(X2/100, h/100, Z2/100);
+			gl.glVertex3f(X1/100, 0.0f, Z1/100);
+		
+		gl.glEnd();
 	}
 	
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR){

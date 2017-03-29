@@ -104,7 +104,7 @@ public class Vertex {
 		return;
 	}
 	
-	/** dessiner le Vertex en blanch si il est electionner, sinon en noir */
+	/** dessiner le Vertex en blanch si il est electionner, sinon en gris */
 	public void drawOpen (Graphics g){
 		if (selected) {
 			g.setColor(ModeleurModel.WHITE);
@@ -112,6 +112,30 @@ public class Vertex {
 			return;
 		}
 		g.setColor(ModeleurModel.GREY);
+		g.fillOval((int)x, (int)y, 25, 25);
+		return;
+	}
+	
+	/** dessiner le Vertex du porte entrant en blanch s‘il est selectionné, sinon en bleu */
+	public void drawDoorEntrant (Graphics g){
+		if (selected) {
+			g.setColor(ModeleurModel.ENTRANTSELECTED);
+			g.fillOval((int)x, (int)y, 25, 25);
+			return;
+		}
+		g.setColor(ModeleurModel.ENTRANT);
+		g.fillOval((int)x, (int)y, 25, 25);
+		return;
+	}
+	
+	/** dessiner le Vertex du porte sortant en blanch s‘il est selectionné, sinon en rouge */
+	public void drawDoorSortant (Graphics g){
+		if (selected) {
+			g.setColor(ModeleurModel.SORTANTSELECTED);
+			g.fillOval((int)x, (int)y, 25, 25);
+			return;
+		}
+		g.setColor(ModeleurModel.SORTANT);
 		g.fillOval((int)x, (int)y, 25, 25);
 		return;
 	}

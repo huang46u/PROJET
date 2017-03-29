@@ -39,6 +39,8 @@ public class Corridor implements Space{
 	/** le nom de fichier qui devrait charger la chambre prochaine */
 	private String idNextRoom;
 	
+	private int hauteur;
+	
 	// ------ constructeur ------
 	/** Constructeur par default */
 	public Corridor(String id, int screenWidth){
@@ -46,6 +48,7 @@ public class Corridor implements Space{
 		traces.add(new Wall(new Vertex(screenWidth/2,screenWidth/8),new Vertex(screenWidth/2,screenWidth/8*7)));
 		width=120;
 		idNextRoom=null;
+		hauteur=100;
 		updateWalls();
 	}
 	
@@ -120,26 +123,25 @@ public class Corridor implements Space{
 		return new Vertex(x,y);
 	}
 	
+	
+	
 	/** Mettre a jour les deux suites de murs pour poursuivre la transformation de traces */
 	public void updateWalls(){
 		leftWalls.clear();
 		rightWalls.clear();
-		
 		for (int i=0;i<traces.size();i++){
 			ArrayList<Wall> sidWalls = new ArrayList<Wall>();
 			sidWalls = traces.get(i).findWalls(width, traces.get(i).getHeight());
 			leftWalls.add(sidWalls.get(0));
 			rightWalls.add(sidWalls.get(1));
 		}
-		
 		for (int i=0; i< leftWalls.size()-1;i++){
 			Vertex v = findIntersectionPoint(leftWalls.get(i), leftWalls.get(i+1));
 			if (v!=null){
 				leftWalls.get(i).setV2(v);
 				leftWalls.get(i+1).setV1(v);
 			}
-		}
-		
+		}		
 		for (int i=0; i< rightWalls.size()-1;i++){
 			Vertex v = findIntersectionPoint(rightWalls.get(i), rightWalls.get(i+1));
 			if (v!=null){
@@ -148,6 +150,41 @@ public class Corridor implements Space{
 			}
 		}
 	}
+	
+	
+	public float[] corridorangle(){
+		float[] angle=new float[2];
+		float x1 =leftWalls.get(this.traces.size()-1).getV2().getX()/100;
+		float y1 =leftWalls.get(this.traces.size()-1).getV2().getY()/100;
+		float x2 =rightWalls.get(this.traces.size()-1).getV2().getX()/100;
+		float y2 =rightWalls.get(this.traces.size()-1).getV2().getY()/100;
+		
+		float x3 =leftWalls.get(0).getV1().getX()/100;
+		float y3 =leftWalls.get(0).getV1().getY()/100;
+		float x4 =rightWalls.get(0).getV1().getX()/100;
+		float y4 =rightWalls.get(0).getV1().getY()/100;
+		double tan_sortant_angle=(y2-y1)/(x2-x1);
+		double tan_entrant_angle=(y4-y3)/(x3-x4);
+		angle[0]=(float) (Math.atan(tan_entrant_angle)/Math.PI*2*360);
+		angle[1]=(float) (Math.atan(tan_sortant_angle)/Math.PI*2*360);
+		
+		return angle;
+	}
+	
+	public float[] findCorridorEntrance() {
+		float[] entrance = new float[2];
+		entrance[0] = (float) this.getTraces().get(this.getTraces().size()-1).getV2().getX()/100;
+		entrance[1] = (float) this.getTraces().get(this.getTraces().size()-1).getV2().getY()/100;
+		return entrance;
+	}
+	
+	public float[] findCorridorSortance() {
+		float[] entrance = new float[2];
+		entrance[0] = (float) this.getTraces().get(0).getV1().getX()/100;
+		entrance[1] = (float) this.getTraces().get(0).getV1().getY()/100;
+		return entrance;
+	}
+	
 	
 	/** retourne une suite de traces */
 	public ArrayList<Wall> getTraces(){
@@ -179,8 +216,7 @@ public class Corridor implements Space{
 	@Override
 	public void addVertex(){
 		Wall tmp = null;
-		Vertex v1 = null,v2 = null,v3 = null, v4 = null;
-		
+		Vertex v1 = null,v2 = null,v3 = null, v4 = null;		
 		for(Wall w: traces){
 			if(w.isSelected()){    //il faut verifier si Open dans le mur est NULL
 				v1=w.getV1();
@@ -195,11 +231,12 @@ public class Corridor implements Space{
 			traces.remove(tmp);
 			traces.add(index,new Wall(v4, v2));
 			traces.add(index,new Wall(v1, v3));
+			
 			v3.select();
 			v4.select();
 		}
 	}
-	
+
 	@Override
 	public void delVertex(){
 		Wall tmp =null;
@@ -217,11 +254,11 @@ public class Corridor implements Space{
 			traces.remove(tmp);
 			traces.add(index, new Wall(v1,v2));
 			traces.remove(next);
-			
 		}	
-		
 	}
 	
+	
+
 	@Override
 	public Wall nextWall(Wall w){
 		int n=traces.indexOf(w);
@@ -323,46 +360,80 @@ public class Corridor implements Space{
 	
 	@Override
 	public void draw(GL2 gl) {
-		for (Wall w : leftWalls){
-			w.draw(gl);
-		}
+		gl.glPushMatrix();
 		
+		for (Wall w : leftWalls){
+			w.drawcorridor(gl, hauteur);
+		}
 		for (Wall w : rightWalls){
 			w.draw(gl);
 		}
-		
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(0.2f, 0.8f, 0.2f);
 		
-		for (int i=0 ; i< leftWalls.size();i++){
-			
-			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, 0.0f, leftWalls.get(i).getV1().getY()/100);
-			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, 0.0f, leftWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 0.0f, rightWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 0.0f, rightWalls.get(i).getV1().getY()/100);
-			
+		for (int i=0 ; i< leftWalls.size();i++){	
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, 
+					0.0f, leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, 
+					0.0f, leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 
+					0.0f, rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 
+					0.0f, rightWalls.get(i).getV1().getY()/100);
 		}
-		
 		gl.glEnd();
 		
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(0.2f, 0.8f, 0.2f);
-		
 		for (int i=0 ; i< leftWalls.size();i++){
-			
-			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV1().getY()/100);
-			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV1().getY()/100);
-			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, 
+					leftWalls.get(i).getHeight()/100, 
+					leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100,
+					leftWalls.get(i).getHeight()/100,
+					leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 
+					rightWalls.get(i).getHeight()/100, 
+					rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 
+					rightWalls.get(i).getHeight()/100, 
+					rightWalls.get(i).getV1().getY()/100);	
 		}
-		
 		gl.glEnd();
+		gl.glPopMatrix();
+		Room r =new Room();
+		try {
+			r.read("rooms/"+this.getIdNextRoom());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		float rotateangle=(180.0f-this.corridorangle()[1]+r.doorangle()[0]);
+		float translateX=this.findCorridorSortance()[0]-r.findRoomEntrance()[0];
+		float translateZ=this.findCorridorSortance()[1]-r.findRoomEntrance()[1];
+		//gl.glTranslatef(translateX, 0,translateZ-0.01f);
+		gl.glTranslatef(this.findCorridorSortance()[0], 0,this.findCorridorSortance()[1]);
 		
+		gl.glRotatef(rotateangle, 0, 1, 0);
+		
+		System.out.println(" cooridorangle: "+this.corridorangle()[1]+"\n"+ " doorangle: "+ r.doorangle()[0]);
+		
+		r.draw(gl);
+		
+		
+	}
+
+	public int getHauteur() {
+		return hauteur;
+	}
+
+	public void setHauteur(int hauteur) {
+		this.hauteur = hauteur;
 	}
 
 	@Override
 	public void draw(GL2 gl, float tT, float tB, float tL, float tR) {
+		gl.glPushMatrix();
 		for (Wall w : leftWalls){
 			w.draw(gl, tT, tB, tL, tR);
 		}
@@ -375,12 +446,14 @@ public class Corridor implements Space{
 		gl.glColor3f(0.2f, 0.8f, 0.2f);
 		
 		for (int i=0 ; i< leftWalls.size();i++){
-			
-			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, 0.0f, leftWalls.get(i).getV1().getY()/100);
-			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, 0.0f, leftWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 0.0f, rightWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 0.0f, rightWalls.get(i).getV1().getY()/100);
-			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100,
+					0.0f, leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, 
+					0.0f, leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, 
+					0.0f, rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, 
+					0.0f, rightWalls.get(i).getV1().getY()/100);
 		}
 		
 		gl.glEnd();
@@ -389,15 +462,35 @@ public class Corridor implements Space{
 		gl.glColor3f(0.2f, 0.8f, 0.2f);
 		
 		for (int i=0 ; i< leftWalls.size();i++){
-			
-			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV1().getY()/100);
-			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100, leftWalls.get(i).getHeight()/100, leftWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV2().getY()/100);
-			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100, rightWalls.get(i).getHeight()/100, rightWalls.get(i).getV1().getY()/100);
-			
+			gl.glVertex3f(leftWalls.get(i).getV1().getX()/100,
+					leftWalls.get(i).getHeight()/100,
+					leftWalls.get(i).getV1().getY()/100);
+			gl.glVertex3f(leftWalls.get(i).getV2().getX()/100,
+					leftWalls.get(i).getHeight()/100,
+					leftWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV2().getX()/100,
+					rightWalls.get(i).getHeight()/100,
+					rightWalls.get(i).getV2().getY()/100);
+			gl.glVertex3f(rightWalls.get(i).getV1().getX()/100,
+					rightWalls.get(i).getHeight()/100,
+					rightWalls.get(i).getV1().getY()/100);	
 		}
-		
 		gl.glEnd();
+		Room r =new Room();
+		try {
+			r.read("rooms/"+this.getIdNextRoom());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		float rotateangle=(this.corridorangle()[1]-r.doorangle()[0]);
+		float translateX=this.findCorridorSortance()[0]-r.findRoomEntrance()[0];
+		float translateZ=this.findCorridorSortance()[1]-r.findRoomEntrance()[1];
+		gl.glTranslatef(translateX, 0,translateZ);
+		gl.glRotatef(rotateangle, 0, 1, 0);
+		
+		r.draw(gl, tT, tB, tL, tR);
+		
 	}
 
 }

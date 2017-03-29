@@ -9,6 +9,7 @@
 package blueprint;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -37,6 +38,7 @@ import javax.swing.JTextField;
 
 import com.jogamp.opengl.GL2;
 
+import modeleur.GraphHeight;
 import modeleur.ModeleurModel;
 
 /** class Room : cette clase doit implementer l'interface Space. Elle sert a definir les pieces qu'on doit creer */
@@ -53,6 +55,7 @@ public class Room implements Space {
 	// # A optimiser
 	/** Des dialog pour parametrer les attributs de mur et ouverture */
 	private static JDialog ig1, ig2;
+	private static GraphHeight windowHeight,DoorHeight;
 	
 	// ---- constructeurs -----
 	/** constructeur par default */
@@ -133,6 +136,31 @@ public class Room implements Space {
 		}
 		return false;
 	}
+	/**Retourne les angles de la port entrante et la port sortante */
+	public float[] doorangle(){
+		float[] doorangle= new float[2];
+		for(Wall w:walls){
+			if(w.getOpen() instanceof Door){
+				Door d=(Door) w.getOpen();
+				
+				float x1=w.getV1().getX();
+				float y1=w.getV1().getY();
+				float x2=w.getV2().getX();
+				float y2=w.getV2().getY();
+				
+				double tanangle=(y2-y1)/(x2-x1);
+				float angle=(float) (Math.atan(tanangle)/Math.PI*2/360);
+				if(d.isEntrance()){
+				doorangle[0]=angle;		
+				}
+				else{
+					doorangle[1]=angle;
+				}
+			}
+		}
+		return doorangle;
+	}
+	
 	
 	/** verifier si le point en argrument est dans le zone navigable 
 	 *  et retourne le coordonne de glisser de camera */
@@ -306,6 +334,7 @@ public class Room implements Space {
 		return true;
 	}
 	
+	
 	public void addDoor(String id, boolean entrant){
 		for(Wall w: walls){
 			if(w.isSelected()){
@@ -317,7 +346,10 @@ public class Room implements Space {
 				if (ig1 == null) ig1=new JDialog();
 				
 				JTextField input; //Composants textuels de l'interface
-				 
+				if(DoorHeight== null) DoorHeight=new GraphHeight();
+				DoorHeight.setPreferredSize(new Dimension(300,300));
+				DoorHeight.changemode(3);
+				DoorHeight.validate();
 				Font font = new Font("Arial", Font.BOLD, 20);
 				 //JPanel Nord
 				input= new JTextField(10);
@@ -328,6 +360,9 @@ public class Room implements Space {
 			     		String s = jt.getText();
 			     		int n = Integer.parseInt(s);
 			     		w.setOpenHeight(n);
+			     		DoorHeight.setdoorHeight(n);
+			     		DoorHeight.validate();
+			     		DoorHeight.repaint();
 			            }
 			          });
 				input.setFont(font);
@@ -372,9 +407,11 @@ public class Room implements Space {
 				for (File f: listOffiles)
 					list.append(" # "+f.getName()+"\n");
 				list.setFont(font);
-				
-				ig1.getContentPane().add(controlPanel, BorderLayout.NORTH);
-				ig1.getContentPane().add(controlPanel2, BorderLayout.CENTER);
+				JPanel controlPanel3=new JPanel(new GridLayout(2,1));
+				controlPanel3.add(controlPanel);
+				controlPanel3.add(controlPanel2);
+				ig1.getContentPane().add(controlPanel3, BorderLayout.WEST);
+				ig1.getContentPane().add(DoorHeight,BorderLayout.CENTER);
 				ig1.getContentPane().add(new JScrollPane(list),BorderLayout.SOUTH);
 				ig1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				ig1.pack();
@@ -393,8 +430,15 @@ public class Room implements Space {
 				
 				if (ig2 == null) ig2=new JDialog();
 				
+				
+				if(windowHeight== null) windowHeight=new GraphHeight();
+				windowHeight.setPreferredSize(new Dimension(300,300));
+				windowHeight.changemode(2);
+				windowHeight.validate();
+				
+				
 				JTextField input; //Composants textuels de l'interface
-				 
+				
 				Font font = new Font("Arial", Font.BOLD, 20);
 				 //JPanel Nord
 				input= new JTextField(10);
@@ -405,6 +449,9 @@ public class Room implements Space {
 			     		String s = jt.getText();
 			     		int n = Integer.parseInt(s);
 			     		w.setOpenHeight(n);
+			     		windowHeight.setwindowHeightA(n);
+			     		windowHeight.validate();
+			     		windowHeight.repaint();
 			            }
 			          });
 				input.setFont(font);
@@ -429,6 +476,9 @@ public class Room implements Space {
 			     		String s = jt.getText();
 			     		int n = Integer.parseInt(s);
 			     		w.setWindowHeight(n);
+			     		windowHeight.setwindowHeightB(n);
+			     		windowHeight.validate();
+			     		windowHeight.repaint();
 			            }
 			          });
 				input2.setFont(font);
@@ -442,9 +492,12 @@ public class Room implements Space {
 				nb2.setPreferredSize(new Dimension(110*2,70));
 				controlPanel2.add(nb2);
 				controlPanel2.add(input2);
+				JPanel controlPanel3=new JPanel(new GridLayout(2,1));
+				controlPanel3.add(controlPanel);
+				controlPanel3.add(controlPanel2);
+				ig2.getContentPane().add(windowHeight,BorderLayout.EAST);
+				ig2.getContentPane().add(controlPanel3, BorderLayout.CENTER);
 				
-				ig2.getContentPane().add(controlPanel, BorderLayout.NORTH);
-				ig2.getContentPane().add(controlPanel2, BorderLayout.CENTER);
 				ig2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				ig2.pack();
 				ig2.setVisible(true);
@@ -475,6 +528,36 @@ public class Room implements Space {
 	
 	// surcharger des methodes d'interface Space 
 	
+	public float[] findRoomEntrance(){
+		float[] entrance = new float[2];
+		for (Wall w : this.getWalls()){
+			if(w.getOpen() != null && w.getOpen() instanceof Door){
+				Door d = (Door)w.getOpen();
+				if(d.isEntrance()){
+					entrance[0] = (float)d.getMidVertex().getX()/100;
+					entrance[1] = (float)d.getMidVertex().getY()/100;
+					return entrance;
+				}
+			}
+		}
+	
+		return null;
+	}
+	
+	public float[] findRoomSortance(){
+		float[] sortance= new float[2];
+		for (Wall w : this.getWalls()){
+			if(w.getOpen() != null && w.getOpen() instanceof Door){
+				Door d = (Door)w.getOpen();
+				if(!d.isEntrance()){
+					sortance[0] = (float)d.getMidVertex().getX()/100;
+					sortance[1] = (float)d.getMidVertex().getY()/100;
+					return sortance;
+				}
+			}
+		}
+		return null;
+	}
 	@Override
 	public Wall nextWall(Wall w){
 		int n=walls.indexOf(w);
@@ -522,6 +605,7 @@ public class Room implements Space {
 
 	@Override
 	public void draw(GL2 gl){
+		gl.glPushMatrix();
 		for (Wall w : walls){
 			w.draw(gl);
 		}
@@ -539,6 +623,7 @@ public class Room implements Space {
 				gl.glVertex3f(w.getV1().getX()/100, w.getHeight()/100, w.getV1().getY()/100);
 			}
 		gl.glEnd();
+		gl.glPopMatrix();
 	}
 	
 	@Override
@@ -720,6 +805,16 @@ public class Room implements Space {
 		
 		
 	}
+	
+	public void drawHeight(Graphics g){
+		 
+		 g.setColor(Color.green);
+		 
+		 g.drawRect(0,0, 50,getHeight());
+	}
 
+	
+		
+	
 	
 }

@@ -9,6 +9,7 @@
 package modeleur;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -34,6 +35,7 @@ import blueprint.Corridor;
 import blueprint.Door;
 import blueprint.Room;
 import blueprint.Wall;
+import modeleur.ModeleurModel.Graph;
 
 /**
  * class ModeleurController 
@@ -44,6 +46,8 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 	ModeleurModel mm;
 	
 	JDialog igBNR, igBH, igBW, igBRH;
+	GraphHeight doorHeight,windowHeight,WallHeight,corridorHeight;
+
 	
 	public ModeleurController(ModeleurModel mm) {
 		this.mm = mm;
@@ -147,7 +151,6 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 					mm.toolbar.removeAll();
 					
 					mm.bAddVertex.addActionListener(this);
-					
 					mm.toolbar.add(mm.optsTraces, BorderLayout.CENTER);
 					mm.toolbar.add(mm.save, BorderLayout.SOUTH);
 					mm.toolbar.validate();
@@ -156,7 +159,6 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 					selected=true;
 				}
 				mm.graph.repaint();
-				
 				if(!selected){
 					mm.toolbar.removeAll();
 					mm.toolbar.add(mm.optsCorridor, BorderLayout.CENTER);
@@ -226,7 +228,11 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 					float orY = w.getV2().getY();
 					w.getV2().move(x-mm.r, y-mm.r);
 					mm.room.nextWall(w).getV1().move(x-mm.r, y-mm.r);
-					if(!mm.room.isConvexe() || (w.getOpen()!=null && w.getOpen().getWidth()>w.getV1().VtDisVt(w.getV2()))){
+					if(!mm.room.isConvexe() || 
+							(w.getOpen()!=null && 
+							w.getOpen().getWidth()>w.getV1().VtDisVt(w.getV2()
+									/*&& w.getV1().>w.getV2()*/)))
+					{
 						w.getV2().move(orX, orY);
 						mm.room.nextWall(w).getV1().move(orX, orY);
 					}else if(mm.room.nextWall(w).getOpen()!=null && mm.room.nextWall(w).getOpen().getWidth() > mm.room.nextWall(w).getV1().VtDisVt(mm.room.nextWall(w).getV2())){
@@ -292,11 +298,10 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 				if(w.isSelected()){
 					float[] list=w.move(x, y);
 					if(mm.corridor.nextWall(w)==null){
-						
 					}else{
 						w.getV2().move(list[2], list[3]);
 						mm.corridor.nextWall(w).getV1().move(list[2], list[3]);
-					}
+						}
 					if(mm.corridor.lastWall(w)==null){
 						
 					}else{
@@ -305,10 +310,14 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 					}
 				}
 				else if (w.getV1().isSelected()){
-					w.getV1().move(x-mm.r, y-mm.r);
+					
+						w.getV1().move(x-mm.r, y-mm.r);
+				
 				}
 				else if (w.getV2().isSelected()){
-					w.getV2().move(x-mm.r, y-mm.r);
+					
+						w.getV2().move(x-mm.r, y-mm.r);
+					
 				}
 				mm.corridor.updateWalls();
 				mm.graph.repaint();
@@ -415,7 +424,11 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			if (igBRH == null) igBRH=new JDialog();
 			
 			JTextField input; //Composants textuels de l'interface
-			 
+			if(WallHeight==null) WallHeight=new GraphHeight();
+			WallHeight.setPreferredSize(new Dimension(300,300));
+			WallHeight.changemode(1);
+			WallHeight.validate();
+			
 			 //JPanel Nord
 			input= new JTextField(10);
 			input.setPreferredSize(new Dimension(200,30));
@@ -425,12 +438,15 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		     		String w = jt.getText();
 		     		int n = Integer.parseInt(w);
 		     		mm.room.setHeight(n);
-		     		
+		     		WallHeight.setwallheight(n);
+		     		WallHeight.changemode(1);
+		     		WallHeight.validate();
+		     		WallHeight.repaint();
 		            }
 		          });
 			input.setFont(font);
 			input.setText(""+mm.room.getHeight());
-			 
+			
 			JPanel controlPanel= new JPanel(new GridLayout(1,2));
 			JLabel nb = new JLabel("HAUTEUR ",JLabel.CENTER);
 			nb.setFont(font);
@@ -439,8 +455,8 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			nb.setPreferredSize(new Dimension(110*2,70));
 			controlPanel.add(nb);
 			controlPanel.add(input);
-			
-			igBRH.getContentPane().add(controlPanel);
+			igBRH.getContentPane().add(WallHeight,new BorderLayout().CENTER);
+			igBRH.getContentPane().add(controlPanel,new BorderLayout().WEST);
 			igBRH.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			igBRH.pack();
 			igBRH.setVisible(true);
@@ -479,6 +495,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.repaint();
 		} else if (source == mm.bWindow && mm.mode==1){
 			mm.room.addWindow("Window");
+			
 			mm.graph.repaint();
 		} else if (source == mm.bDelVertex && mm.mode==1){
 			mm.room.delVertex();
@@ -534,7 +551,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		          });
 			input.setFont(font);
 			input.setText(""+mm.corridor.getWidth());
-			 
+			
 			JPanel controlPanel= new JPanel(new GridLayout(1,2));
 			JLabel nb = new JLabel("LARGEUR ",JLabel.CENTER);
 			nb.setFont(font);
@@ -552,34 +569,65 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 		} else if (source == mm.bHeight && mm.mode==2){
 			if (igBH == null) igBH=new JDialog();
 			
-			JTextField input;
-			 
-			input= new JTextField(10);
-			input.setPreferredSize(new Dimension(200,30));
-			input.addActionListener(new ActionListener() {
+			JTextField inputwallhauteur,inputcorridorhauteur;
+			
+			JPanel controlPanel= new JPanel(new GridLayout(2,2));
+			controlPanel.setBackground(ModeleurModel.DARKGREY4);
+			if(corridorHeight== null) corridorHeight=new GraphHeight();
+			corridorHeight.setPreferredSize(new Dimension(300,300));
+			corridorHeight.validate();
+			corridorHeight.changemode(1);
+			inputwallhauteur= new JTextField(10);
+			inputwallhauteur.setPreferredSize(new Dimension(200,30));
+			inputwallhauteur.addActionListener(new ActionListener() {
 		         public void actionPerformed(ActionEvent e) {
 		        	JTextField jt = (JTextField) e.getSource();
 		     		String w = jt.getText();
 		     		int n = Integer.parseInt(w);
 		     		mm.corridor.setHeight(n);
+		     		corridorHeight.changemode(1);
+		     		corridorHeight.setwallheight(n);
+		     		corridorHeight.validate();
+					corridorHeight.repaint();
 		            }
 		          });
-			input.setFont(font);
-			input.setText(""+mm.corridor.getHeight());
-			 
-			JPanel controlPanel= new JPanel(new GridLayout(1,2));
-			JLabel nb = new JLabel("HAUTEUR ",JLabel.CENTER);
-			nb.setFont(font);
-			nb.setForeground(ModeleurModel.BLACK);
-			controlPanel.setBackground(ModeleurModel.DARKGREY4);
-			nb.setPreferredSize(new Dimension(110*2,70));
-			controlPanel.add(nb);
-			controlPanel.add(input);
+			inputwallhauteur.setFont(font);
+			inputwallhauteur.setText(""+mm.corridor.getHeight());
+			JLabel nb1 = new JLabel("WallHAUTEUR ",JLabel.CENTER);
+			nb1.setFont(font);
+			nb1.setForeground(ModeleurModel.BLACK);
+			nb1.setPreferredSize(new Dimension(110*2,70));
+			controlPanel.add(nb1);
+			controlPanel.add(inputwallhauteur);
 			
-			igBH.getContentPane().add(controlPanel);
+			inputcorridorhauteur= new JTextField(10);
+			inputcorridorhauteur.setPreferredSize(new Dimension(200,30));
+			inputcorridorhauteur.addActionListener(new ActionListener() {
+		         public void actionPerformed(ActionEvent e) {
+		        	JTextField jt = (JTextField) e.getSource();
+		     		String w = jt.getText();
+		     		int n = Integer.parseInt(w);
+		     		mm.corridor.setHauteur(n);
+		            }
+		          });
+			inputcorridorhauteur.setFont(font);
+			inputcorridorhauteur.setText(""+mm.corridor.getHauteur());
+
+			JLabel nb2 = new JLabel("CorrrdorHAUTEUR ",JLabel.CENTER);
+			nb2.setFont(font);
+			nb2.setForeground(ModeleurModel.BLACK);
+			nb2.setPreferredSize(new Dimension(110*2,70));
+			controlPanel.add(nb2);
+			controlPanel.add(inputcorridorhauteur);
+			JPanel graphPanel=new JPanel();
+			
+			
+			igBH.getContentPane().add(corridorHeight,BorderLayout.CENTER);
+			igBH.getContentPane().add(controlPanel,BorderLayout.WEST);
 			igBH.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			igBH.pack();
 			igBH.setVisible(true);
+			
 		} else if (source == mm.bNextRoom && mm.mode==2){
 			if (igBNR == null) igBNR=new JDialog();
 			
@@ -632,6 +680,7 @@ public class ModeleurController implements ActionListener, MouseListener, MouseM
 			mm.graph.repaint();
 		} 
 	}
+	
 	
 	
 

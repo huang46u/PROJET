@@ -181,10 +181,14 @@ public class NavigateurView extends GLCanvas implements GLEventListener{
 		
 		// On dessine la chambre ou le couloir
 		if(!textured[texturestat]){
-			if(model.isRoomFile)
+			if(model.isRoomFile){
 				model.room.draw(gl);
+				}
 			else 
 				model.corridor.draw(gl);
+			if(model.hasNext()){
+				
+			}
 		}
 		else{
 			if(model.isRoomFile)

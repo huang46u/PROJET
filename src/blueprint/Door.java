@@ -57,8 +57,14 @@ public class Door extends Open {
 
 	@Override
 	public void draw(Graphics g) {
-		getV1().drawOpen(g);
-		getV2().drawOpen(g);
+		if(entrant==true){
+		getV1().drawDoorEntrant(g);
+		getV2().drawDoorEntrant(g);
+		}
+		else{
+			getV1().drawDoorSortant(g);
+			getV2().drawDoorSortant(g);
+		}
 		getMidVertex().draw(g);
 	}
 

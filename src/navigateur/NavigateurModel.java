@@ -177,21 +177,7 @@ public class NavigateurModel {
 		
 	}
 	
-	public float[] findRoomEntrance(){
-		float[] entrance = new float[2];
-		for (Wall w : room.getWalls()){
-			if(w.getOpen() != null && w.getOpen() instanceof Door){
-				Door d = (Door)w.getOpen();
-				if(d.isEntrance()){
-					entrance[0] = (float)d.getMidVertex().getX()/100;
-					entrance[1] = (float)d.getMidVertex().getY()/100;
-					return entrance;
-				}
-			}
-		}
-		System.out.println("dont have entrance");
-		return null;
-	}
+	
 
 	public void turnNavigation() {
 		modeNavigation = !modeNavigation;
@@ -203,12 +189,7 @@ public class NavigateurModel {
 		return false;
 	}
 
-	public float[] findCorridorEntrance() {
-		float[] entrance = new float[2];
-		entrance[0] = (float) corridor.getTraces().get(corridor.getTraces().size()-1).getV2().getX()/100;
-		entrance[1] = (float) corridor.getTraces().get(corridor.getTraces().size()-1).getV2().getY()/100;
-		return entrance;
-	}
+	
 	
 	//public void 
 	
@@ -218,17 +199,17 @@ public class NavigateurModel {
 			try {
 				room=new Room();
 				room.read(filename);
-				float[] entrance = findRoomEntrance();
+				float[] entrance = room.findRoomEntrance();
 				setPosX(entrance[0]);
 				setPosZ(entrance[1]);
-			} catch (IOException e1) {
+			}catch (IOException e1){
 				e1.printStackTrace();
 			};
 		} else{
 			try {
 				corridor=new Corridor();
 				corridor.read(filename);
-				float[] entrance = findCorridorEntrance();
+				float[] entrance = corridor.findCorridorEntrance();
 				setPosX(entrance[0]);
 				setPosZ(entrance[1]);
 			} catch (IOException e1) {
